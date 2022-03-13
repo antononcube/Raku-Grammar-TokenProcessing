@@ -1,0 +1,31 @@
+{
+  "name": "Grammar::TokenProcessing",
+  "description": "Adding fuzzy matching expressions in tokens.",
+  "version": "0.1.2",
+  "perl": "6.d",
+  "authors": [
+    "Anton Antonov"
+  ],
+  "auth": "github:antononcube",
+  "depends": [
+    "Lingua::EN::Stem::Porter"
+  ],
+  "build-depends": [],
+  "test-depends": [],
+  "provides": {
+    "Grammar::TokenProcessing": "lib/Grammar/TokenProcessing.rakumod",
+    "Grammar::TokenProcessing::Actions::EnhancedTokens": "lib/Grammar/TokenProcessing/Actions/EnhancedTokens.rakumod",
+    "Grammar::TokenProcessing::Actions::Tokens": "lib/Grammar/TokenProcessing/Actions/Tokens.rakumod",
+    "Grammar::TokenProcessing::Grammar": "lib/Grammar/TokenProcessing/Grammar.rakumod"
+  },
+  "resources": [],
+  "license": "Artistic-2.0",
+  "tags": [
+    "grammar",
+    "token",
+    "fuzzy",
+    "matching"
+  ],
+  "api": "1",
+  "source-url": "None"
+}
