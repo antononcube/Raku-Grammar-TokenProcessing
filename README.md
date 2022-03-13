@@ -32,7 +32,7 @@ Usage:
 ### Add fuzzy matching to toke specs
 
 ```shell
- ./bin/AddFuzzyMatching --help
+> AddFuzzyMatching --help
 Usage:
   ./bin/AddFuzzyMatching [-o|--output[=Any]] [--add-proto-token] [--sym-name=<Str>] [--add-exclusions] <inputFileName> -- Transform a token lines in a grammar role into token lines with fuzzy matching.
   
