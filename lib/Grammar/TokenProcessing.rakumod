@@ -130,3 +130,30 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
 
     return 0;
 }
+
+
+##===========================================================
+## Utilities
+##===========================================================
+our sub reallyflat (+@list) {
+    gather @list.deepmap: *.take
+}
+
+our sub tree($dir, $extension = Whatever) {
+
+    my @files = gather for dir($dir) -> $f {
+
+        if ($f.IO.f) {
+
+            if $extension.isa(Whatever) {
+                take $f
+            } elsif so $f.Str.match(rx/ ^^ .* <{ $extension }> $$ /) {
+                take $f
+            }
+        } else {
+            take tree($f, $extension);
+        }
+    }
+
+    return @files;
+}
