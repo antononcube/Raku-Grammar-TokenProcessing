@@ -24,7 +24,9 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token delim { \s* '|' \s* }
 
-  token token-body { <token-spec>+ % <.delim> }
+  token token-simple-body { \s* <token-spec>+ % <.delim> \s* }
+
+  token token-complex-body { <-[ { } ]>* }
 
   token token-definition-end { '}' ';'? \h* \n }
 
@@ -34,10 +36,7 @@ grammar Grammar::TokenProcessing::Grammar  {
     <leading-space>
     <token> \s* <token-name-spec> \s*
     [ '{' || <error( "cannot find \{" )> ]
-    [ \s* ]
-    # [ <token-body> || <error( "cannot parse token body" )> ]
-    [ <token-body> ]
-    [ \s* ]
+    [ <token-simple-body> | <token-complex-body> ]
     [ <token-definition-end> || <error( "cannot find <token-token-definition-end>" )> ] }
 
   method error($msg) {

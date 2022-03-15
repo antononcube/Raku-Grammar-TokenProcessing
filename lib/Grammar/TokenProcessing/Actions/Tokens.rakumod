@@ -38,8 +38,12 @@ class Grammar::TokenProcessing::Actions::Tokens {
         make '';
     }
 
-    method token-body($/) {
+    method token-simple-body($/) {
         make $/.values>>.made;
+    }
+
+    method token-complex-body($/) {
+        make '';
     }
 
     method token-spec($/) {
@@ -48,6 +52,7 @@ class Grammar::TokenProcessing::Actions::Tokens {
     }
 
     method token-rule-definition($/) {
-        make $<token-body>.made;
+        my $tokenBody = $<token-complex-body> ?? $<token-complex-body>.made !! $<token-simple-body>.made;
+        make $tokenBody;
     }
 }

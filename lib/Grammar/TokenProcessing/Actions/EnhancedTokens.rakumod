@@ -87,8 +87,12 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
         }
     }
 
-    method token-body($/) {
+    method token-simple-body($/) {
         make ($/.values>>.made).join(' | ');
+    }
+
+    method token-complex-body($/) {
+        make $/.Str;
     }
 
     method token-rule-definition($/) {
@@ -98,7 +102,8 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
         }
 
         my $sym = self.sym-name.chars == 0 ?? '' !! ":sym<{self.sym-name}>";
-        $res = $res ~ $<leading-space>.made ~ $<token>.made ~ ' ' ~ $<token-name-spec>.made ~ $sym ~' { :i ' ~ $<token-body>.made ~ ' }' ~ "\n";
+        my $tokenBody = $<token-complex-body> ?? $<token-complex-body>.made !! $<token-simple-body>.made;
+        $res = $res ~ $<leading-space>.made ~ $<token>.made ~ ' ' ~ $<token-name-spec>.made ~ $sym ~' { :i ' ~ $tokenBody ~ ' }' ~ "\n";
 
         make $res;
     }
