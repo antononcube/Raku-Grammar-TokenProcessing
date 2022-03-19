@@ -9,6 +9,7 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
     has Bool $.add-protos = False;
     has Str $.sym-name = 'General';
     has %.stem-rules = %();
+    has Str $.func-name = 'is-fuzzy-match';
 
     # method reduce($op, @list) {
     #   return @list[0] if @list.elems == 1;
@@ -80,7 +81,7 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
 
             #| Enhance the token
             if $term.chars > 2 {
-                make $/.Str ~ ' | ' ~ '([\w]+) <?{ ' ~ $notoneof ~ 'is-fuzzy-match($0.Str, ' ~ $/.Str ~ $wlenExt ~ ') }>';
+                make $/.Str ~ ' | ' ~ '([\w]+) <?{ ' ~ $notoneof ~ self.func-name ~ '($0.Str, ' ~ $/.Str ~ $wlenExt ~ ') }>';
             } else {
                 make $/.Str;
             }

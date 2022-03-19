@@ -67,20 +67,22 @@ proto enhance-token-specs(Str $spec,
                           Bool :$add-protos= False,
                           Str :$sym-name = '',
                           Bool :$add-exclusions = True,
-                          :$stem-rules = Whatever) is export {*}
+                          :$stem-rules = Whatever,
+                          :$func-name = Whatever) is export {*}
 
 multi enhance-token-specs(Str $fileName where $fileName.IO.e,
                           $output = Whatever,
                           Bool :$add-protos= False,
                           Str :$sym-name = '',
                           Bool :$add-exclusions = True,
-                          :$stem-rules = Whatever) is export {
+                          :$stem-rules = Whatever,
+                          :$func-name = Whatever) is export {
     die "The file given as first argument does not exist: $fileName ." if not $fileName.IO.e;
 
     #| Ingest file content
     my $program = slurp($fileName);
 
-    return enhance-token-specs($program, $output, :$add-protos, :$sym-name, :$add-exclusions, :$stem-rules)
+    return enhance-token-specs($program, $output, :$add-protos, :$sym-name, :$add-exclusions, :$stem-rules, :$func-name)
 }
 
 multi enhance-token-specs(Str $program where not $program.IO.e,
@@ -88,7 +90,11 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
                           Bool :$add-protos = False,
                           Str :$sym-name = '',
                           Bool :$add-exclusions = True,
-                          :$stem-rules = Whatever) {
+                          :$stem-rules = Whatever,
+                          :$func-name is copy = Whatever) {
+
+    $func-name = $func-name.isa(Whatever) ?? 'is-fuzzy-match' !! $func-name;
+    die 'The arugment $func-name is expected to be a string or Whatever.' unless $func-name.isa(Str);
 
     #| Split the program into lines
     my @lines = $program.split("\n");
@@ -109,10 +115,10 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
         note 'The value of the argument $stem-rules is not a Map object or Whatver. Using automatic stem-to-tokens rules.'
         when not $stem-rules.isa(Whatever) and not $stem-rules.isa(Map);
 
-        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, stem-rules => $stemRulesLocal);
+        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, stem-rules => $stemRulesLocal, :$func-name);
 
     } else {
-        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name);
+        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, :$func-name);
     }
 
     #| Enhance tokens

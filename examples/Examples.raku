@@ -1,3 +1,4 @@
+use lib '.';
 
 use Grammar::TokenProcessing;
 use Grammar::TokenProcessing::Grammar;
@@ -51,4 +52,11 @@ EOI
 
 enhance-token-specs($rfile0, Whatever, :add-exclusions, stem-rules => Whatever);
 
-enhance-token-specs($rfile1, Whatever, :add-exclusions, :add-protos, sym-name => 'English', stem-rules => Whatever);
+enhance-token-specs(
+        $rfile1,
+        Whatever,
+        :add-exclusions,
+        :add-protos,
+        sym-name => 'English',
+        stem-rules => Whatever,
+        func-name => Whatever);
