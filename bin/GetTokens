@@ -4,8 +4,6 @@ use v6.d;
 use Grammar::TokenProcessing;
 
 
-sub reallyflat (+@list) { gather @list.deepmap: *.take }
-
 #| Get tokens from token lines in grammar roles.
 multi MAIN(
         Str $inputFileName where *.IO.f, #= Input file name.
@@ -27,7 +25,7 @@ multi MAIN(
                 say '-' x 30;
             }
         } else {
-            my @res = reallyflat(@args>>.Str.map({ get-tokens($_) })).unique.sort;
+            my @res = Grammar::TokenProcessing::reallyflat(@args>>.Str.map({ get-tokens($_) })).unique.sort;
             put @res;
         }
     } else {

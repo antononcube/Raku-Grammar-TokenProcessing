@@ -38,7 +38,7 @@ Usage:
   
     <inputFileName>      Input file name.
     -o|--output[=Any]    Output file; if not given the output is STDOUT.
-    --add-proto-token    Should a proto token be added or not. [default: False]
+    --add-protos         Should proto tokens/rules/regexes be added or not. [default: False]
     --sym-name=<Str>     Sym name. I and empty string ('') then no sym is put in. [default: '']
     --add-exclusions     Should exclusions be added to token extensions or not? [default: True]
 ```

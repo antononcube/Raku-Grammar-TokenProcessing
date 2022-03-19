@@ -6,7 +6,7 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
 
     has @.do-not-enhance = <a an and by do for from get load of per set that the to use with>;
 
-    has Bool $.add-proto-token = False;
+    has Bool $.add-protos = False;
     has Str $.sym-name = 'General';
     has %.stem-rules = %();
 
@@ -97,13 +97,14 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
 
     method token-rule-definition($/) {
         my Str $res = '';
-        if self.add-proto-token {
-            $res = "\n" ~ $res ~ $<leading-space>.made ~ 'proto token ' ~ $<token-name-spec>.made ~ ' {*}' ~ "\n";
+        if self.add-protos {
+            $res = "\n" ~ $res ~ $<leading-space>.made ~ 'proto ' ~ $<token>.made ~ ' ' ~ $<token-name-spec>.made ~ ' {*}' ~ "\n";
         }
 
         my $sym = self.sym-name.chars == 0 ?? '' !! ":sym<{self.sym-name}>";
         my $tokenBody = $<token-complex-body> ?? $<token-complex-body>.made !! $<token-simple-body>.made;
-        $res = $res ~ $<leading-space>.made ~ $<token>.made ~ ' ' ~ $<token-name-spec>.made ~ $sym ~' { :i ' ~ $tokenBody ~ ' }' ~ "\n";
+        my $opts = $<token>.made eq 'token' ?? ' :i' !! '';
+        $res = $res ~ $<leading-space>.made ~ $<token>.made ~ ' ' ~ $<token-name-spec>.made ~ $sym ~' {' ~ $opts ~ ' ' ~ $tokenBody ~ ' }' ~ "\n";
 
         make $res;
     }

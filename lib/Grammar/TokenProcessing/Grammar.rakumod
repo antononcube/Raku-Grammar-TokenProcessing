@@ -18,7 +18,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token-name-spec { [\w | '-' | ':' | '<' | '>' ]+ }
 
-  token token { 'token' }
+  token token { 'token' | 'rule' | 'regex' }
 
   token token-spec { '\'' \w+  '\'' }
 

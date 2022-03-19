@@ -51,4 +51,4 @@ EOI
 
 enhance-token-specs($rfile0, Whatever, :add-exclusions, stem-rules => Whatever);
 
-enhance-token-specs($rfile1, Whatever, :add-exclusions, :add-proto-token, stem-rules => Whatever);
+enhance-token-specs($rfile1, Whatever, :add-exclusions, :add-protos, sym-name => 'English', stem-rules => Whatever);
