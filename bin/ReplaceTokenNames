@@ -1,0 +1,27 @@
+#!/usr/bin/env perl6
+use v6.d;
+
+use Grammar::TokenProcessing;
+
+#| Replaces token names in files.
+multi MAIN(
+        Str $dirName where *.IO.d,        #= Directory with files to processed.
+        Str $pairs where *.IO.f,          #= CSV file with replacement pairs. The first column has the original token names; the second column has the new names.
+        Str :$file-ext = '.rakumod',      #= Extension(s) pattern of the files to be processed.
+        Str :$file-new-ext = '.new',      #= Extension to be added to newly obtained files.
+           ) {
+
+    my @fileNames=Grammar::TokenProcessing::tree($dirName, $file-ext);
+
+    my @rules = slurp($pairs).lines>>.split(',').map({$_[0]=>$_[1]});
+
+    for @fileNames -> $f {
+        my $content = slurp $f;
+        for @rules -> $p {
+            $content = $content.subst('<' ~ $p.key ~ '>', '<' ~ $p.value ~ '>');
+            $content = $content.subst('<.' ~ $p.key ~ '>', '<.' ~ $p.value ~ '>');
+            $content = $content.subst('token ' ~ $p.key, 'token ' ~ $p.value);
+        }
+        spurt $f ~ $file-new-ext, $content;
+    }
+}
