@@ -10,7 +10,7 @@ multi MAIN(
         Bool :$token-names = False       #= Should the tokens name gathered or the token literals?
            ) {
     my @res = Grammar::TokenProcessing::reallyflat( $token-names ?? get-token-names($inputFileName) !! get-tokens($inputFileName) );
-    .say for @res.sort;
+    .say for @res.unique.sort;
 }
 
 multi MAIN(
