@@ -7,25 +7,28 @@ use Grammar::TokenProcessing;
 #| Get tokens from token lines in grammar roles.
 multi MAIN(
         Str $inputFileName where *.IO.f, #= Input file name.
+        Bool :$token-names = False       #= Should the tokens name gathered or the token literals?
            ) {
-    my @res = |get-tokens($inputFileName);
+    my @res = Grammar::TokenProcessing::reallyflat( $token-names ?? get-token-names($inputFileName) !! get-tokens($inputFileName) );
     .say for @res.sort;
 }
 
 multi MAIN(
-        *@args,                   #= Input file names.
-        Bool :$per-file = False   #= Should the tokens be printed out per file or not?
+        *@args,                         #= Input file names.
+        Bool :$token-names = False,     #= Should the tokens name gathered or the token literals?
+        Bool :$per-file = False         #= Should the tokens be printed out per file or not?
            ) {
+
     if [and] @args.map({ $_.IO.e }) {
         if $per-file {
             for @args -> $f {
                 say '-' x 30;
                 say $f;
-                MAIN($f);
+                MAIN($f, $token-names);
                 say '-' x 30;
             }
         } else {
-            my @res = Grammar::TokenProcessing::reallyflat(@args>>.Str.map({ get-tokens($_) })).unique.sort;
+            my @res = Grammar::TokenProcessing::reallyflat(@args>>.Str.map({  $token-names ?? get-token-names($_) !! get-tokens($_) })).unique.sort;
             put @res;
         }
     } else {

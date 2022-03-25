@@ -19,6 +19,7 @@ unit module Grammar::TokenProcessing;
 use Grammar::TokenProcessing::Grammar;
 use Grammar::TokenProcessing::Actions::EnhancedTokens;
 use Grammar::TokenProcessing::Actions::Tokens;
+use Grammar::TokenProcessing::Actions::TokenNames;
 
 use Lingua::EN::Stem::Porter;
 
@@ -58,6 +59,29 @@ multi get-tokens(Str $program where not $program.IO.e) {
     return $allTokens;
 }
 
+##===========================================================
+## Get token names
+##===========================================================
+proto get-token-names(Str $spec) is export {*}
+
+multi get-token-names(Str $fileName where $fileName.IO.e) {
+    die "The file given as first argument does not exist: $fileName ." if not $fileName.IO.e;
+
+    #| Ingest file content
+    my $program = slurp($fileName);
+
+    return get-token-names($program)
+}
+
+multi get-token-names(Str $program where not $program.IO.e) {
+
+    my $TokenGatherer = Grammar::TokenProcessing::Actions::TokenNames.new;
+    my $allTokens = Grammar::TokenProcessing::Grammar.parse($program, actions => $TokenGatherer).made;
+
+    $allTokens = $TokenGatherer.gathered-tokens;
+
+    return $allTokens;
+}
 
 ##===========================================================
 ## Enhance token specs
