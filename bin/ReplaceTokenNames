@@ -8,20 +8,27 @@ multi MAIN(
         Str $dirName where *.IO.d,        #= Directory with files to processed.
         Str $pairs where *.IO.f,          #= CSV file with replacement pairs. The first column has the original token names; the second column has the new names.
         Str :$file-ext = '.rakumod',      #= Extension(s) pattern of the files to be processed.
-        Str :$file-new-ext = '.new',      #= Extension to be added to newly obtained files.
+        Str :$file-new-ext = '.new',      #= Extension to be added to newly obtained files. If NONE the file content is overwritten.
            ) {
 
-    my @fileNames=Grammar::TokenProcessing::tree($dirName, $file-ext);
+    my @fileNames = Grammar::TokenProcessing::reallyflat(Grammar::TokenProcessing::tree($dirName, $file-ext));
 
     my @rules = slurp($pairs).lines>>.split(',').map({$_[0]=>$_[1]});
 
     for @fileNames -> $f {
         my $content = slurp $f;
         for @rules -> $p {
-            $content = $content.subst('<' ~ $p.key ~ '>', '<' ~ $p.value ~ '>');
-            $content = $content.subst('<.' ~ $p.key ~ '>', '<.' ~ $p.value ~ '>');
-            $content = $content.subst('token ' ~ $p.key, 'token ' ~ $p.value);
+            $content = $content.subst('<' ~ $p.key ~ '>', '<' ~ $p.value ~ '>'):g;
+            $content = $content.subst('<.' ~ $p.key ~ '>', '<.' ~ $p.value ~ '>'):g;
+            $content = $content.subst('token ' ~ $p.key, 'token ' ~ $p.value):g;
         }
-        spurt $f ~ $file-new-ext, $content;
+
+        if $file-new-ext.chars > 0 && $file-new-ext ne 'NONE'  {
+            spurt $f ~ $file-new-ext, $content;
+        } elsif $file-new-ext eq 'NONE'  {
+            spurt $f, $content;
+        } else {
+            die 'Do not know how to use the specified new file(s) extension, $file-new-ext';
+        }
     }
 }
