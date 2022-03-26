@@ -160,7 +160,7 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
         #| For each word find its nearest neighbors
         my $nns = $nearest-neighbors-rules;
         if $nearest-neighbors-rules.isa(Whatever) or not $nearest-neighbors-rules.isa(Map) {
-            $nns = @allTokens.map(-> $w { $w => @allTokens.map(-> $c { $c => ld($w, $c, 2) }).grep({ $_.value.defined && $_.key ne $w })>>.key });
+            $nns = @allTokens.map(-> $w { $w => @allTokens.map(-> $c { $c => dld($w, $c, 2) }).grep({ $_.value.defined && $_.key ne $w })>>.key });
             $nns = $nns.grep({ $_.value })
         }
 
