@@ -10,7 +10,15 @@ sub MAIN(
         Bool :$add-protos = False,           #= Should proto tokens/rules/regexes be added or not.
         Str :$sym-name = '',                 #= Sym name. I and empty string ('') then no sym is put in.
         Bool :$add-exclusions = True,        #= Should exclusions be added to token extensions or not?
+        Str :$method = 'nearst-neighbors',   #= Method to find the word exclusions; one of 'nearest-neighbors' and 'stem-rules'.
         Str :$func-name = 'is-fuzzy-match'   #= Function name to do fuzzy matching with.
          ) {
-    enhance-token-specs($inputFileName, $output, :$add-protos, :$sym-name, :$add-exclusions, stem-rules => Whatever, :$func-name )
+    enhance-token-specs($inputFileName, $output,
+            :$add-protos,
+            :$sym-name,
+            :$add-exclusions,
+            stem-rules => Whatever,
+            nearest-neighbors-rules => Whatever,
+            :$method,
+            :$func-name )
 }
