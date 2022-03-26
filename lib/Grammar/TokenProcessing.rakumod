@@ -22,6 +22,7 @@ use Grammar::TokenProcessing::Actions::Tokens;
 use Grammar::TokenProcessing::Actions::TokenNames;
 
 use Lingua::EN::Stem::Porter;
+use Text::Levenshtein::Damerau;
 
 ##===========================================================
 ## Get dictionary words
@@ -115,6 +116,8 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
                           Str :$sym-name = '',
                           Bool :$add-exclusions = True,
                           :$stem-rules = Whatever,
+                          :$nearest-neighbors-rules = Whatever,
+                          :$method = 'nearest-neighbors',
                           :$func-name is copy = Whatever) {
 
     $func-name = $func-name.isa(Whatever) ?? 'is-fuzzy-match' !! $func-name;
@@ -125,10 +128,10 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
 
     #| Make the actions object
     my $ActObj;
-    if $add-exclusions {
+    if $add-exclusions && $method.lc (elem) <stem stem-rules steming steming-rules> {
         #| Find all tokens in the grammar
         my $allTokens = get-tokens($program);
-say '$allTokens : ', $allTokens;
+
         #| Make stem-to-tokens rules
         my $stemRulesLocal = $stem-rules;
 
@@ -136,10 +139,27 @@ say '$allTokens : ', $allTokens;
             $stemRulesLocal = $allTokens.grep({ $_.isa(Str) and $_.chars > 0 }).classify({ porter($_.lc) });
         }
 
-        note 'The value of the argument $stem-rules is not a Map object or Whatver. Using automatic stem-to-tokens rules.'
+        note 'The value of the argument $stem-rules is not a Map object or Whatever. Using automatic stem-to-tokens rules.'
         when not $stem-rules.isa(Whatever) and not $stem-rules.isa(Map);
 
         $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, stem-rules => $stemRulesLocal, :$func-name);
+
+    } elsif $add-exclusions && $method.lc (elem) <nns nearest nearest-neighbors> {
+
+        #| Find all tokens in the grammar
+        my @allTokens = get-tokens($program);
+
+        #| For each word find its nearest neighbors
+        my $nns = $nearest-neighbors-rules;
+        if $nearest-neighbors-rules.isa(Whatever) or not $nearest-neighbors-rules.isa(Map) {
+            $nns = @allTokens.map(-> $w { $w => @allTokens.map(-> $c { $c => ld($w, $c, 2) }).grep({ $_.value.defined && $_.key ne $w })>>.key });
+            $nns = $nns.grep({ $_.value })
+        }
+
+        note 'The value of the argument $nearest-neighbors-rules is not a Map object or Whatever. Using automatic stem-to-tokens rules.'
+        when not $nearest-neighbors-rules.isa(Whatever) and not $nearest-neighbors-rules.isa(Map);
+
+        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, nearest-neighbors-rules => $nns, :$func-name);
 
     } else {
         $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, :$func-name);

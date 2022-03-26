@@ -9,6 +9,7 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
     has Bool $.add-protos = False;
     has Str $.sym-name = 'General';
     has %.stem-rules = %();
+    has %.nearest-neighbors-rules = %();
     has Str $.func-name = 'is-fuzzy-match';
 
     # method reduce($op, @list) {
@@ -61,27 +62,45 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
 
             #| Make the "not one of" condition
             my Str $notoneof = '';
+
             if $term.chars > 0 {
-                my Str $stem = porter($term);
-                if self.stem-rules and self.stem-rules{$stem}:exists {
-                    my @words = (self.stem-rules{$stem} (-) $term).keys;
+
+                my @words;
+
+                if self.stem-rules {
+                    # Stem rules
+                    my Str $stem = porter($term);
+                    if self.stem-rules{$stem}:exists {
+                        @words = (self.stem-rules{$stem} (-) $term).keys;
+                    }
+
+                } elsif self.nearest-neighbors-rules {
+                    # Nearest-neighbors riles
+                    if self.nearest-neighbors-rules{$term}:exists {
+                        @words = |self.nearest-neighbors-rules{$term};
+                    }
+                }
+
+                if @words.defined && @words.elems > 0 {
                     given @words.elems {
                         when $_ == 1 { $notoneof = '$0.Str ne \'' ~ @words.join(' ') ~ '\' and ' }
                         when $_ > 1 { $notoneof = '$0.Str !(elem) <' ~ @words.join(' ') ~ '> and ' }
                     }
                 }
             }
+
             #| Levenshtein distance
             my $wlenExt =
                     do given $term.chars {
                         when $_ == 3 { ', 1' }
-                        when $_ > 3 { ', 2'}
+                        when $_ > 3 { ', 2' }
                         default { '' }
                     }
 
             #| Enhance the token
             if $term.chars > 2 {
-                make $/.Str ~ ' | ' ~ '([\w]+) <?{ ' ~ $notoneof ~ self.func-name ~ '($0.Str, ' ~ $/.Str ~ $wlenExt ~ ') }>';
+                make $/.Str ~ ' | ' ~ '([\w]+) <?{ ' ~ $notoneof ~ self.func-name ~ '($0.Str, ' ~ $/
+                        .Str ~ $wlenExt ~ ') }>';
             } else {
                 make $/.Str;
             }
@@ -99,13 +118,15 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
     method token-rule-definition($/) {
         my Str $res = '';
         if self.add-protos {
-            $res = "\n" ~ $res ~ $<leading-space>.made ~ 'proto ' ~ $<token>.made ~ ' ' ~ $<token-name-spec>.made ~ ' {*}' ~ "\n";
+            $res = "\n" ~ $res ~ $<leading-space>.made ~ 'proto ' ~ $<token>.made ~ ' ' ~ $<token-name-spec>
+                    .made ~ ' {*}' ~ "\n";
         }
 
-        my $sym = self.sym-name.chars == 0 ?? '' !! ":sym<{self.sym-name}>";
+        my $sym = self.sym-name.chars == 0 ?? '' !! ":sym<{ self.sym-name }>";
         my $tokenBody = $<token-complex-body> ?? $<token-complex-body>.made !! $<token-simple-body>.made;
         my $opts = $<token>.made eq 'token' ?? ' :i' !! '';
-        $res = $res ~ $<leading-space>.made ~ $<token>.made ~ ' ' ~ $<token-name-spec>.made ~ $sym ~' {' ~ $opts ~ ' ' ~ $tokenBody ~ ' }' ~ "\n";
+        $res = $res ~ $<leading-space>.made ~ $<token>.made ~ ' ' ~ $<token-name-spec>
+                .made ~ $sym ~ ' {' ~ $opts ~ ' ' ~ $tokenBody ~ ' }' ~ "\n";
 
         make $res;
     }
