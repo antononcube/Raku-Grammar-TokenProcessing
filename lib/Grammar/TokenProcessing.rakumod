@@ -56,7 +56,7 @@ multi get-tokens(Str $program where not $program.IO.e) {
     # say ' $TokenGatherer.gathered-tokens : ', $TokenGatherer.gathered-tokens;
     $allTokens = $TokenGatherer.gathered-tokens;
 
-    return $allTokens;
+    return reallyflat($allTokens);
 }
 
 ##===========================================================
@@ -80,7 +80,7 @@ multi get-token-names(Str $program where not $program.IO.e) {
 
     $allTokens = $TokenGatherer.gathered-tokens;
 
-    return $allTokens;
+    return reallyflat($allTokens);
 }
 
 ##===========================================================
@@ -128,7 +128,7 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
     if $add-exclusions {
         #| Find all tokens in the grammar
         my $allTokens = get-tokens($program);
-
+say '$allTokens : ', $allTokens;
         #| Make stem-to-tokens rules
         my $stemRulesLocal = $stem-rules;
 
