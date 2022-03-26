@@ -93,6 +93,8 @@ proto enhance-token-specs(Str $spec,
                           Str :$sym-name = '',
                           Bool :$add-exclusions = True,
                           :$stem-rules = Whatever,
+                          :$nearest-neighbors-rules = Whatever,
+                          :$method = 'nearest-neighbors',
                           :$func-name = Whatever) is export {*}
 
 multi enhance-token-specs(Str $fileName where $fileName.IO.e,
@@ -101,13 +103,15 @@ multi enhance-token-specs(Str $fileName where $fileName.IO.e,
                           Str :$sym-name = '',
                           Bool :$add-exclusions = True,
                           :$stem-rules = Whatever,
+                          :$nearest-neighbors-rules = Whatever,
+                          :$method = 'nearest-neighbors',
                           :$func-name = Whatever) is export {
     die "The file given as first argument does not exist: $fileName ." if not $fileName.IO.e;
 
     #| Ingest file content
     my $program = slurp($fileName);
 
-    return enhance-token-specs($program, $output, :$add-protos, :$sym-name, :$add-exclusions, :$stem-rules, :$func-name)
+    return enhance-token-specs($program, $output, :$add-protos, :$sym-name, :$add-exclusions, :$stem-rules, :$nearest-neighbors-rules, :$method, :$func-name)
 }
 
 multi enhance-token-specs(Str $program where not $program.IO.e,
@@ -117,7 +121,7 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
                           Bool :$add-exclusions = True,
                           :$stem-rules = Whatever,
                           :$nearest-neighbors-rules = Whatever,
-                          :$method = 'nearest-neighbors',
+                          :$method is copy = 'nearest-neighbors',
                           :$func-name is copy = Whatever) {
 
     $method = $method.isa(Whatever) ?? 'nearest-neighbors' !! $method;
@@ -134,7 +138,7 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
     my $ActObj;
     if $add-exclusions && $method.lc (elem) <stem stem-rules steming steming-rules> {
         #| Find all tokens in the grammar
-        my $allTokens = get-tokens($program);
+        my $allTokens = get-tokens($program).unique;
 
         #| Make stem-to-tokens rules
         my $stemRulesLocal = $stem-rules;
@@ -151,7 +155,7 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
     } elsif $add-exclusions && $method.lc (elem) <nns nearest nearest-neighbors> {
 
         #| Find all tokens in the grammar
-        my @allTokens = get-tokens($program);
+        my @allTokens = get-tokens($program).unique;
 
         #| For each word find its nearest neighbors
         my $nns = $nearest-neighbors-rules;
