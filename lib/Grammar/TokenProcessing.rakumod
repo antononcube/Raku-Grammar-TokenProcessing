@@ -120,8 +120,12 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
                           :$method = 'nearest-neighbors',
                           :$func-name is copy = Whatever) {
 
+    $method = $method.isa(Whatever) ?? 'nearest-neighbors' !! $method;
+    die 'The argument $method is expected to be one of Whatever, \'nearest-neighbors\', or \'stem-rules\'.'
+    unless $method.isa(Str);
+
     $func-name = $func-name.isa(Whatever) ?? 'is-fuzzy-match' !! $func-name;
-    die 'The arugment $func-name is expected to be a string or Whatever.' unless $func-name.isa(Str);
+    die 'The argument $func-name is expected to be a string or Whatever.' unless $func-name.isa(Str);
 
     #| Split the program into lines
     my @lines = $program.split("\n");
