@@ -13,14 +13,14 @@ multi MAIN(
 
     my @fileNames = Grammar::TokenProcessing::reallyflat(Grammar::TokenProcessing::tree($dirName, $file-ext));
 
-    my @rules = slurp($pairs).lines>>.split(',').map({$_[0]=>$_[1]});
+    my @rules = slurp($pairs).lines>>.split(',').map({$_[0]=>$_[1]}).sort({ $_.key });
 
     for @fileNames -> $f {
         my $content = slurp $f;
         for @rules -> $p {
             $content = $content.subst('<' ~ $p.key ~ '>', '<' ~ $p.value ~ '>'):g;
             $content = $content.subst('<.' ~ $p.key ~ '>', '<.' ~ $p.value ~ '>'):g;
-            $content = $content.subst('token ' ~ $p.key, 'token ' ~ $p.value):g;
+            $content = $content.subst( 'token ' ~ $p.key ~ ' {', 'token ' ~ $p.value ~ ' {');
         }
 
         if $file-new-ext.chars > 0 && $file-new-ext ne 'NONE'  {
