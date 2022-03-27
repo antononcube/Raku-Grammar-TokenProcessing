@@ -12,7 +12,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token empty-line { \h* \n }
 
-  token code-line { \h* \N* \n }
+  token code-line { \h* \N* \n | \h* '}' \h* $$ }
 
   token comment-line { '#' \N* \n }
 
