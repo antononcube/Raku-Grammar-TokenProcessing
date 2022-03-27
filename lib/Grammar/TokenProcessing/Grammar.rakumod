@@ -37,7 +37,7 @@ grammar Grammar::TokenProcessing::Grammar  {
     <token> \s* <token-name-spec> \s*
     [ '{' || <error( "cannot find \{" )> ]
     [ <token-simple-body> | <token-complex-body> ]
-    [ <token-definition-end> || <error( "cannot find <token-token-definition-end>" )> ] }
+    [ <token-definition-end> || <error( "cannot find <token-definition-end>" )> ] }
 
   method error($msg) {
     my $parsed = self.target.substr(0, self.pos).trim-trailing;
