@@ -28,7 +28,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token-complex-body { <-[ { } ]>* }
 
-  token token-definition-end { '}' ';'? \h* \n }
+  token token-definition-end { '}' \h* ';'? \h* \n }
 
   token leading-space { \h* }
 
