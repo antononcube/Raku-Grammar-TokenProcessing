@@ -26,7 +26,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token-simple-body { \s* <token-spec>+ % <.delim> \s* }
 
-  token token-complex-body { <-[ { } ]>* }
+  token token-complex-body { <-[ { } ]>* <?before \}>}
 
   token token-definition-end { '}' \h* ';'? \h* \n }
 
