@@ -8,7 +8,7 @@ unit module Grammar::TokenProcessing::Grammar;
 
 grammar Grammar::TokenProcessing::Grammar  {
 
-  rule TOP { [ <token-rule-definition> | <empty-line> | <comment-line> | <code-line> ]+ }
+  regex TOP { [ <token-rule-definition> | <empty-line> | <comment-line> | <code-line> ]+ }
 
   token empty-line { \h* \n }
 
@@ -24,19 +24,23 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token delim { \s* '|' \s* }
 
-  token token-simple-body { \s* <token-spec>+ % <.delim> \s* }
+  regex token-simple-body { \s* [ <token-spec>+ % <.delim> ] \s* }
 
-  token token-complex-body { <-[ { } ]>* <?before \}>}
+  regex token-phrase-body { \s* [ <token-name-spec>+ % <.delim> ] \s* }
+
+  regex token-complex-body { [ <token-spec> | <token-name-spec> | '|' | '||' | ']' | '[' | '?' | '+' | \s ]+ }
+
+  regex token-body { <token-simple-body> | <token-phrase-body> | <token-complex-body> }
 
   token token-definition-end { '}' \h* ';'? \h* \n }
 
   token leading-space { \h* }
 
-  token token-rule-definition {
+  regex token-rule-definition {
     <leading-space>
     <token> \s* <token-name-spec> \s*
     [ '{' || <error( "cannot find \{" )> ]
-    [ <token-simple-body> | <token-complex-body> ]
+    <token-body>
     [ <token-definition-end> || <error( "cannot find <token-definition-end>" )> ] }
 
   method error($msg) {

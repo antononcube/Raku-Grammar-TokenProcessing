@@ -42,8 +42,16 @@ class Grammar::TokenProcessing::Actions::TokenNames {
         make $/.values>>.made;
     }
 
+    method token-phrase-body($/) {
+        make '';
+    }
+
     method token-complex-body($/) {
         make '';
+    }
+
+    method token-body($/) {
+        make $/.values[0].made;
     }
 
     method token-spec($/) {

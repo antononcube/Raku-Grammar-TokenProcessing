@@ -1,4 +1,4 @@
-use v6.d;
+ use v6.d;
 
 use Lingua::EN::Stem::Porter;
 
@@ -111,8 +111,20 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
         make ($/.values>>.made).join(' | ');
     }
 
+    method token-phrase-body($/) {
+        if $/.values.elems > 3 {
+            make "\n" ~ (' ' x 8) ~ ($/.values>>.made).join(" |\n" ~ (' ' x 8))
+        } else {
+            make ($/.values>>.made).join(' | ')
+        }
+    }
+
     method token-complex-body($/) {
         make $/.Str;
+    }
+
+    method token-body($/) {
+        make $/.values[0].made;
     }
 
     method token-rule-definition($/) {
@@ -123,7 +135,7 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
         }
 
         my $sym = self.sym-name.chars == 0 ?? '' !! ":sym<{ self.sym-name }>";
-        my $tokenBody = $<token-complex-body> ?? $<token-complex-body>.made !! $<token-simple-body>.made;
+        my $tokenBody = $<token-body>.made;
         my $opts = $<token>.made eq 'token' ?? ' :i' !! '';
         $res = $res ~ $<leading-space>.made ~ $<token>.made ~ ' ' ~ $<token-name-spec>
                 .made ~ $sym ~ ' {' ~ $opts ~ ' ' ~ $tokenBody ~ ' }' ~ "\n";
