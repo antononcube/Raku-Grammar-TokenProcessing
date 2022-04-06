@@ -28,7 +28,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   regex token-phrase-body { \s* [ <token-name-spec>+ % <.delim> ] \s* }
 
-  regex token-complex-body { [ <token-spec> | <token-name-spec> | '|' | '||' | ']' | '[' | '?' | '+' | \s ]* }
+  regex token-complex-body { [ <token-spec> | <token-name-spec> | '|' | '||' | ']' | '[' | '?' | '+' | \s | '\\' ]* }
 
   regex token-body { <token-simple-body> | <token-phrase-body> | <token-complex-body> }
 
