@@ -31,7 +31,7 @@ Usage:
     --per-file         Should the tokens be printed out per file or not? [default: False]
 ```
 
-### Add fuzzy matching to toke specs
+### Add fuzzy matching to token specs
 
 ```shell
 > AddFuzzyMatching --help
