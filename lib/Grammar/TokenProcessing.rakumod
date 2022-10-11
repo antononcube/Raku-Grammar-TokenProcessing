@@ -20,6 +20,7 @@ use Grammar::TokenProcessing::Grammar;
 use Grammar::TokenProcessing::Actions::EnhancedTokens;
 use Grammar::TokenProcessing::Actions::Tokens;
 use Grammar::TokenProcessing::Actions::TokenNames;
+use Grammar::TokenProcessing::Actions::TokensHash;
 
 use Lingua::EN::Stem::Porter;
 use Text::Levenshtein::Damerau;
@@ -82,6 +83,30 @@ multi get-token-names(Str $program where not $program.IO.e) {
     $allTokens = $TokenGatherer.gathered-tokens;
 
     return reallyflat($allTokens);
+}
+
+##===========================================================
+## Get token names
+##===========================================================
+proto get-tokens-hash(Str $spec) is export {*}
+
+multi get-tokens-hash(Str $fileName where $fileName.IO.e) {
+    die "The file given as first argument does not exist: $fileName ." if not $fileName.IO.e;
+
+    #| Ingest file content
+    my $program = slurp($fileName);
+
+    return get-tokens-hash($program)
+}
+
+multi get-tokens-hash(Str $program where not $program.IO.e) {
+
+    my $TokenGatherer = Grammar::TokenProcessing::Actions::TokensHash.new;
+    my %allTokens = Grammar::TokenProcessing::Grammar.parse($program, actions => $TokenGatherer).made;
+
+    %allTokens = $TokenGatherer.gathered-tokens; # .map({ $_.key => [|reallyflat($_.value)] });
+
+    return %allTokens;
 }
 
 ##===========================================================
