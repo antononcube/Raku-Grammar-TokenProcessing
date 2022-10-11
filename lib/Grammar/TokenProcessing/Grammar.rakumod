@@ -22,9 +22,11 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token-spec { '\'' [\w | '-']*  '\'' }
 
+  token token-spec-list { <token-spec>+ % \s+ }
+
   token delim { \s* '|' \s* }
 
-  regex token-simple-body { \s* [ <token-spec>+ % <.delim> ] \s* }
+  regex token-simple-body { \s* [ <token-spec-list>+ % <.delim> ] \s* }
 
   regex token-phrase-body { \s* [ <token-name-spec>+ % <.delim> ] \s* }
 

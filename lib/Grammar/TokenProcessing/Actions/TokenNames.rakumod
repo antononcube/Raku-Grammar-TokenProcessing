@@ -58,6 +58,10 @@ class Grammar::TokenProcessing::Actions::TokenNames {
         make '';
     }
 
+    method token-spec-list($/) {
+        make '';
+    }
+
     method token-rule-definition($/) {
         make $<token-name-spec>.made;
     }

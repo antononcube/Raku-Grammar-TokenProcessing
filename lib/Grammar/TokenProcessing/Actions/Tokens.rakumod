@@ -59,6 +59,10 @@ class Grammar::TokenProcessing::Actions::Tokens {
         make $term;
     }
 
+    method token-spec-list($/) {
+        make $/.values>>.made;
+    }
+
     method token-rule-definition($/) {
         make $<token-body>.made;
     }
