@@ -1,14 +1,14 @@
 =begin pod
 
-=head1 AddFuzzMatching
+=head1 TokenProcessing
 
-C<AddFuzzMatching> package has grammar classes and action classes for the parsing
+C<TokenProcessing> package has grammar classes and action classes for the parsing
 Raku Perl 6 grammar files and making a file with token grammar rules that are
 extended to have fuzzy matching function calls.
 
 =head1 Synopsis
 
-    use AddFuzzMatching;
+    use TokenProcessing;
     enhance-token-specs( $fileName, output, :add-protos, sym-name => 'English', :add-exclusions);
 
 =end pod
