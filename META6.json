@@ -8,8 +8,8 @@
   ],
   "auth": "zef:antononcube",
   "depends": [
-    "Lingua::EN::Stem::Porter",
-    "Text::Levenshtein::Damerau"
+    "Lingua::EN::Stem::Porter:ver<1.2+>",
+    "Text::Levenshtein::Damerau:ver<0.3.0+>"
   ],
   "build-depends": [],
   "test-depends": [],
