@@ -8,7 +8,7 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 #| Get tokens from token lines in grammar roles.
 multi MAIN(
         Str $inputFileName where *.IO.f, #= Input file name.
-        Bool :$token-names = False       #= Should the tokens name gathered or the token literals?
+        Bool :$token-names = False       #= Should the token names be gathered or the token literals?
            ) {
     my @res = Grammar::TokenProcessing::reallyflat( $token-names ?? get-token-names($inputFileName) !! get-tokens($inputFileName) );
     .say for @res.unique.sort;
@@ -16,7 +16,7 @@ multi MAIN(
 
 multi MAIN(
         *@args,                         #= Input file names.
-        Bool :$token-names = False,     #= Should the tokens name gathered or the token literals?
+        Bool :$token-names = False,     #= Should the token names be gathered or the token literals?
         Bool :$per-file = False         #= Should the tokens be printed out per file or not?
            ) {
 

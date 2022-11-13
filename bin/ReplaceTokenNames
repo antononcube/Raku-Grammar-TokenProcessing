@@ -7,7 +7,7 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Replaces token names in files.
 multi MAIN(
-        Str $dirName where *.IO.d,        #= Directory with files to processed.
+        Str $dirName where *.IO.d,        #= Directory with files to be processed.
         Str $pairs where *.IO.f,          #= CSV file with replacement pairs. The first column has the original token names; the second column has the new names.
         Str :$file-ext = '.rakumod',      #= Extension(s) pattern of the files to be processed.
         Str :$file-new-ext = '.new',      #= Extension to be added to newly obtained files. If NONE the file content is overwritten.
