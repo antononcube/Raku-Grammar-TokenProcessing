@@ -6,7 +6,7 @@
   "authors": [
     "Anton Antonov"
   ],
-  "auth": "github:antononcube",
+  "auth": "zef:antononcube",
   "depends": [
     "Lingua::EN::Stem::Porter",
     "Text::Levenshtein::Damerau"
