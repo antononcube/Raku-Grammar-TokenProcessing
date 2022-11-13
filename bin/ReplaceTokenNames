@@ -3,6 +3,8 @@ use v6.d;
 
 use Grammar::TokenProcessing;
 
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
 #| Replaces token names in files.
 multi MAIN(
         Str $dirName where *.IO.d,        #= Directory with files to processed.

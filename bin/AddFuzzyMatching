@@ -3,6 +3,8 @@ use v6.d;
 
 use Grammar::TokenProcessing;
 
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
 #| Transform a token lines in a grammar role into token lines with fuzzy matching.
 sub MAIN(
         Str $inputFileName where *.IO.f,     #= Input file name.

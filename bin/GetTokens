@@ -3,6 +3,7 @@ use v6.d;
 
 use Grammar::TokenProcessing;
 
+my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Get tokens from token lines in grammar roles.
 multi MAIN(
