@@ -127,6 +127,10 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
         make $/.values[0].made;
     }
 
+    method token-spec-list($/) {
+        make $/.values>>.made.join(' ');
+    }
+
     method token-rule-definition($/) {
         my Str $res = '';
         if self.add-protos {
