@@ -1,6 +1,6 @@
 {
   "name": "Grammar::TokenProcessing",
-  "description": "Processing grammar files in order to extract tokens, replace tokens, or to add fuzzy matching expressions in token definitions.",
+  "description": "Processing grammar files in order to extract tokens, to replace token names, or to add fuzzy matching expressions in token definitions.",
   "version": "0.1.2",
   "perl": "6.d",
   "authors": [
