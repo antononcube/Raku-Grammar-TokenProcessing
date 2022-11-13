@@ -1,6 +1,6 @@
 {
   "name": "Grammar::TokenProcessing",
-  "description": "Adding fuzzy matching expressions in tokens.",
+  "description": "Processing grammar files in order to extract tokens, replace tokens, or to add fuzzy matching expressions in token definitions.",
   "version": "0.1.2",
   "perl": "6.d",
   "authors": [
@@ -27,7 +27,9 @@
     "grammar",
     "token",
     "fuzzy",
-    "matching"
+    "matching",
+    "replacement",
+    "token name"
   ],
   "api": "1",
   "source-url": "https://github.com/antononcube/Raku-Grammar-TokenProcessing.git"
