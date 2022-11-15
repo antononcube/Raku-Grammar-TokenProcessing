@@ -250,9 +250,7 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
 ## Random sentence generation
 ##===========================================================
 
-my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new();
-
-sub random-part(Str $ruleBody is copy) {
+sub random-part(Str $ruleBody is copy, $actObj) {
     my $res =
             Grammar::TokenProcessing::ComprehensiveGrammar.parse(
                     $ruleBody,
@@ -310,25 +308,30 @@ multi sub take-rule-body(Str $definition is copy) {
 }
 
 ##------------------------------------------------------------
-sub replace-definitions(Str $ruleBody, %rules) {
+sub replace-definitions(Str $ruleBody, %rules, $actObj) {
 
-    my @resBodies = |random-part($ruleBody);
+    my @resBodies = |random-part($ruleBody, $actObj);
     @resBodies = |@resBodies.map({ $_ ~~ Str ?? take-rule-body($_, %rules) !! '' });
 
     return @resBodies;
 }
 
 ##------------------------------------------------------------
-sub generate-random-sentence(Str $ruleBody, %rules, UInt :$max-iterations = 40) is export {
+sub generate-random-sentence(Str $ruleBody,
+                             %rules,
+                             UInt :$max-iterations = 40,
+                             UInt :$max-random-list-elements = 6) is export {
 
-    my @res = random-part($ruleBody);
-    @res = |replace-definitions($ruleBody, %rules);
+    my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(:$max-random-list-elements);
+
+    my @res = random-part($ruleBody, $actObj);
+    @res = |replace-definitions($ruleBody, %rules, $actObj);
     @res = reallyflat(@res);
     my UInt $k = 0;
     while so @res.join(' ') ~~ / '<' <-[<>]>+ '>' | .+ '|' .+ / && $k++ < $max-iterations {
         #note 'generate-random-sentence : '.uc, $k, ' : ', @res.raku;
-        @res = @res.map({ random-part($_) });
-        @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules) !! '' });
+        @res = @res.map({ random-part($_, $actObj) });
+        @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules, $actObj) !! '' });
         @res = reallyflat(@res);
     }
     #note 'generate-random-sentence : '.uc, 'END : ', @res.raku;
