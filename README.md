@@ -8,7 +8,13 @@ Raku package for processing grammar files in order to:
 
 - Replace token names
 
-- Add fuzzy matching expressions in token definitions.
+- Add fuzzy matching expressions in token definitions
+
+- Random sentence generation
+
+**Remark:** This package is made mostly to automate tasks for the DSL system of packages, see:
+[Raku-DSL-*](https://github.com/search?q=user%3Aantononcube+Raku-DSL).
+Hence, the package is tested "just" over files written with a particular style and goal.
 
 ------
 
