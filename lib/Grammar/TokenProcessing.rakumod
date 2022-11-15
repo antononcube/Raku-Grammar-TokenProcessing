@@ -12,6 +12,7 @@ extended to have fuzzy matching function calls.
     enhance-token-specs( $fileName, output, :add-protos, sym-name => 'English', :add-exclusions);
 
 =end pod
+
 use v6.d;
 
 unit module Grammar::TokenProcessing;
@@ -54,7 +55,9 @@ our sub tree($dir, $extension = Whatever) {
     return @files;
 }
 
-our sub single-qouted(Str $s) { '\'' ~ $s ~ '\'' }
+our sub single-qouted(Str $s) {
+    '\'' ~ $s ~ '\''
+}
 
 ##===========================================================
 ## Get dictionary words
@@ -135,7 +138,8 @@ multi get-tokens-hash(Str $program where not $program.IO.e) {
     my $TokenGatherer = Grammar::TokenProcessing::Actions::TokensHash.new;
     my %allTokens = Grammar::TokenProcessing::Grammar.parse($program, actions => $TokenGatherer).made;
 
-    %allTokens = $TokenGatherer.gathered-tokens; # .map({ $_.key => [|reallyflat($_.value)] });
+    %allTokens = $TokenGatherer.gathered-tokens;
+    # .map({ $_.key => [|reallyflat($_.value)] });
 
     return %allTokens;
 }
@@ -167,7 +171,8 @@ multi enhance-token-specs(Str $fileName where $fileName.IO.e,
     #| Ingest file content
     my $program = slurp($fileName);
 
-    return enhance-token-specs($program, $output, :$add-protos, :$sym-name, :$add-exclusions, :$stem-rules, :$nearest-neighbors-rules, :$method, :$func-name)
+    return enhance-token-specs($program, $output, :$add-protos, :$sym-name, :$add-exclusions, :$stem-rules,
+            :$nearest-neighbors-rules, :$method, :$func-name)
 }
 
 multi enhance-token-specs(Str $program where not $program.IO.e,
@@ -206,7 +211,8 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
         note 'The value of the argument $stem-rules is not a Map object or Whatever. Using automatic stem-to-tokens rules.'
         when not $stem-rules.isa(Whatever) and not $stem-rules.isa(Map);
 
-        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, stem-rules => $stemRulesLocal, :$func-name);
+        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name,
+                stem-rules => $stemRulesLocal, :$func-name);
 
     } elsif $add-exclusions && $method.lc (elem) <nns nearest nearest-neighbors> {
 
@@ -216,14 +222,16 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
         #| For each word find its nearest neighbors
         my $nns = $nearest-neighbors-rules;
         if $nearest-neighbors-rules.isa(Whatever) or not $nearest-neighbors-rules.isa(Map) {
-            $nns = @allTokens.map(-> $w { $w => @allTokens.map(-> $c { $c => dld($w, $c, 2) }).grep({ $_.value.defined && $_.key ne $w })>>.key });
+            $nns = @allTokens.map(-> $w { $w => @allTokens.map(-> $c { $c => dld($w, $c, 2) }).grep({ $_.value
+                    .defined && $_.key ne $w })>>.key });
             $nns = $nns.grep({ $_.value })
         }
 
         note 'The value of the argument $nearest-neighbors-rules is not a Map object or Whatever. Using automatic stem-to-tokens rules.'
         when not $nearest-neighbors-rules.isa(Whatever) and not $nearest-neighbors-rules.isa(Map);
 
-        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, nearest-neighbors-rules => $nns, :$func-name);
+        $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name,
+                nearest-neighbors-rules => $nns, :$func-name);
 
     } else {
         $ActObj = Grammar::TokenProcessing::Actions::EnhancedTokens.new(:$add-protos, :$sym-name, :$func-name);
@@ -274,9 +282,12 @@ multi sub take-rule-body(Str $ruleKey is copy, %rules) {
         when $_ eq '<number-value>' { return single-qouted 'NUMBER(' ~ random-real(300).round(.01).Str ~ ')'; }
         when $_ eq '<integer-value>' { return single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')'; }
         when $_ eq '<query-text>' { return single-qouted 'QUERYTEXT("' ~ random-word(4).join(' ') ~ '")'; }
-        when $_ eq '<mixed-quoted-variable-names-list>' { return single-qouted 'VARNAMESLIST("' ~ random-word(3).join(', ') ~ '")'; }
-        when $_ eq '<mixed-quoted-variable-name>' { return single-qouted 'VARNAME("' ~ random-string( chars => 5, ranges => [ <y n Y N>, "0".."9" ] ) ~ '")'; }
-        when $_ eq '<variable-name>' { return single-qouted 'VARNAME("' ~ random-string( chars => 5, ranges => [ <y n Y N>, "0".."9" ] ) ~ '")'; }
+        when $_ eq '<mixed-quoted-variable-names-list>' { return single-qouted 'VARNAMESLIST("' ~ random-word(3)
+                .join(', ') ~ '")'; }
+        when $_ eq '<mixed-quoted-variable-name>' { return single-qouted 'VARNAME("' ~ random-string(chars => 5,
+                ranges => [<y n Y N>, "0" .. "9"]) ~ '")'; }
+        when $_ eq '<variable-name>' { return single-qouted 'VARNAME("' ~ random-string(chars => 5,
+                ranges => [<y n Y N>, "0" .. "9"]) ~ '")'; }
         when $_ ∈ ['<ws>', '<.ws>'] { return single-qouted ' '; }
     }
 
@@ -317,12 +328,22 @@ sub replace-definitions(Str $ruleBody, %rules, $actObj) {
 }
 
 ##------------------------------------------------------------
-sub generate-random-sentence(Str $ruleBody,
-                             %rules,
-                             UInt :$max-iterations = 40,
-                             UInt :$max-random-list-elements = 6) is export {
+proto sub generate-random-sentence(Str $ruleBody, %rules, |) is export {*}
+
+multi sub generate-random-sentence(Str $ruleBody,
+                                   %rules,
+                                   UInt :$max-iterations = 40,
+                                   UInt :$max-random-list-elements = 6) is export {
 
     my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(:$max-random-list-elements);
+
+    return generate-random-sentence($ruleBody, %rules, $actObj, :$max-iterations);
+}
+
+multi sub generate-random-sentence(Str $ruleBody,
+                                   %rules,
+                                   $actObj,
+                                   UInt :$max-iterations = 40) is export {
 
     my @res = random-part($ruleBody, $actObj);
     @res = |replace-definitions($ruleBody, %rules, $actObj);
