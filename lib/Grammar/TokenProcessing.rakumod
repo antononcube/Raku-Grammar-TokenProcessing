@@ -277,7 +277,8 @@ multi sub take-rule-body(Str $ruleKey is copy, %rules) {
         when $_ eq '<integer-value>' { return single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')'; }
         when $_ eq '<query-text>' { return single-qouted 'QUERYTEXT("' ~ random-word(4).join(' ') ~ '")'; }
         when $_ eq '<mixed-quoted-variable-names-list>' { return single-qouted 'VARNAMESLIST("' ~ random-word(3).join(', ') ~ '")'; }
-        when $_ eq '<mixed-quoted-variable-name>' { return single-qouted 'VARNAME("' ~ random-word() ~ '")'; }
+        when $_ eq '<mixed-quoted-variable-name>' { return single-qouted 'VARNAME("' ~ random-string( chars => 5, ranges => [ <y n Y N>, "0".."9" ] ) ~ '")'; }
+        when $_ eq '<variable-name>' { return single-qouted 'VARNAME("' ~ random-string( chars => 5, ranges => [ <y n Y N>, "0".."9" ] ) ~ '")'; }
         when $_ ∈ ['<ws>', '<.ws>'] { return single-qouted ' '; }
     }
 
