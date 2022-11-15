@@ -20,7 +20,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token { 'token' | 'rule' | 'regex' }
 
-  token token-spec { '\'' <-['\'']>*  '\'' }
+  token token-spec { '\'' <-[']>*  '\'' }
 
   token token-spec-list { <token-spec>+ % \s+ }
 
