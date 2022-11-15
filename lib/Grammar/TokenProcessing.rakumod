@@ -17,13 +17,44 @@ use v6.d;
 unit module Grammar::TokenProcessing;
 
 use Grammar::TokenProcessing::Grammar;
+use Grammar::TokenProcessing::ComprehensiveGrammar;
 use Grammar::TokenProcessing::Actions::EnhancedTokens;
+use Grammar::TokenProcessing::Actions::RandomSentence;
 use Grammar::TokenProcessing::Actions::Tokens;
 use Grammar::TokenProcessing::Actions::TokenNames;
 use Grammar::TokenProcessing::Actions::TokensHash;
 
 use Lingua::EN::Stem::Porter;
 use Text::Levenshtein::Damerau;
+use Data::Generators;
+
+##===========================================================
+## Utilities
+##===========================================================
+our sub reallyflat (+@list) {
+    gather @list.deepmap: *.take
+}
+
+our sub tree($dir, $extension = Whatever) {
+
+    my @files = gather for dir($dir) -> $f {
+
+        if ($f.IO.f) {
+
+            if $extension.isa(Whatever) {
+                take $f
+            } elsif so $f.Str.match(rx/ ^^ .* <{ $extension }> $$ /) {
+                take $f
+            }
+        } else {
+            take tree($f, $extension);
+        }
+    }
+
+    return @files;
+}
+
+our sub single-qouted(Str $s) { '\'' ~ $s ~ '\'' }
 
 ##===========================================================
 ## Get dictionary words
@@ -216,27 +247,89 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
 
 
 ##===========================================================
-## Utilities
+## Random sentence generation
 ##===========================================================
-our sub reallyflat (+@list) {
-    gather @list.deepmap: *.take
+
+my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new();
+
+sub random-part(Str $ruleBody is copy) {
+    my $res =
+            Grammar::TokenProcessing::ComprehensiveGrammar.parse(
+                    $ruleBody,
+                    rule => 'token-comprehensive-body',
+                    actions => $actObj,
+                    ).made;
+    #if (not so $res ~~ Str) || $res.trim eq '' { return $ruleBody; }
+    return $res;
 }
 
-our sub tree($dir, $extension = Whatever) {
+##------------------------------------------------------------
+proto take-rule-body(|) {*}
 
-    my @files = gather for dir($dir) -> $f {
+multi sub take-rule-body(Str $ruleKey is copy, %rules) {
 
-        if ($f.IO.f) {
-
-            if $extension.isa(Whatever) {
-                take $f
-            } elsif so $f.Str.match(rx/ ^^ .* <{ $extension }> $$ /) {
-                take $f
-            }
-        } else {
-            take tree($f, $extension);
-        }
+    if not so $ruleKey.trim ~~ / ^ '<' .*  '>' $ / {
+        return $ruleKey;
     }
 
-    return @files;
+    given $ruleKey {
+        when $_ eq '<number-value>' { return single-qouted 'NUMBER(' ~ random-real(300).round(.01).Str ~ ')'; }
+        when $_ eq '<integer-value>' { return single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')'; }
+        when $_ eq '<query-text>' { return single-qouted 'QUERYTEXT("' ~ random-word(4).join(' ') ~ '")'; }
+        when $_ eq '<mixed-quoted-variable-names-list>' { return single-qouted 'VARNAMESLIST("' ~ random-word(3).join(', ') ~ '")'; }
+        when $_ eq '<mixed-quoted-variable-name>' { return single-qouted 'VARNAME("' ~ random-word() ~ '")'; }
+        when $_ ∈ ['<ws>', '<.ws>'] { return single-qouted ' '; }
+    }
+
+    $ruleKey = $ruleKey.Str.trim.substr(1, *- 1).subst(/ ^ \. /, '');
+
+    if %rules{$ruleKey}:exists {
+        if %rules{$ruleKey ~ ':sym<English>'}:exists {
+            $ruleKey = $ruleKey ~ ':sym<English>';
+        }
+        my $ruleVal = %rules{$ruleKey}.gist;
+        if not so $ruleVal ~~ Str {
+            warn "Cannot get a rule body for $ruleKey.";
+        }
+        return take-rule-body($ruleVal);
+    }
+    return $ruleKey;
+}
+
+multi sub take-rule-body(Str $definition is copy) {
+
+    #note $definition;
+    #note $definition.raku;
+    $definition = $definition.subst(/ '|' \h* '([\w]+) <?{' .* '}>' /, '').subst(':i', '');
+    #note $definition.raku;
+    $definition ~~ s/ ^ (.*) '{' \h* (.*) \h* '}' (.*) $ / $1 /;
+    $definition = $definition.subst("\n", ''):g;
+    #note 'take-rule-body : '.uc, $definition.raku;
+    return $definition.trim;
+}
+
+##------------------------------------------------------------
+sub replace-definitions(Str $ruleBody, %rules) {
+
+    my @resBodies = |random-part($ruleBody);
+    @resBodies = |@resBodies.map({ $_ ~~ Str ?? take-rule-body($_, %rules) !! '' });
+
+    return @resBodies;
+}
+
+##------------------------------------------------------------
+sub generate-random-sentence(Str $ruleBody, %rules, UInt :$max-iterations = 40) is export {
+
+    my @res = random-part($ruleBody);
+    @res = |replace-definitions($ruleBody, %rules);
+    @res = reallyflat(@res);
+    my UInt $k = 0;
+    while so @res.join(' ') ~~ / '<' <-[<>]>+ '>' | .+ '|' .+ / && $k++ < $max-iterations {
+        #note 'generate-random-sentence : '.uc, $k, ' : ', @res.raku;
+        @res = @res.map({ random-part($_) });
+        @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules) !! '' });
+        @res = reallyflat(@res);
+    }
+    #note 'generate-random-sentence : '.uc, 'END : ', @res.raku;
+    return @res.grep({ $_.trim.chars > 0 }).join(' ').trim;
 }
