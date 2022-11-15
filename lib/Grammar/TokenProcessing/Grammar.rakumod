@@ -16,11 +16,11 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token comment-line { '#' \N* \n }
 
-  token token-name-spec { [\w | '-' | ':' | '<' | '>' ]+ }
+  token token-name-spec { [\w | '-' | ':' | '.' | '<' | '>' ]+ }
 
   token token { 'token' | 'rule' | 'regex' }
 
-  token token-spec { '\'' [\w | '-']*  '\'' }
+  token token-spec { '\'' <-['\'']>*  '\'' }
 
   token token-spec-list { <token-spec>+ % \s+ }
 
