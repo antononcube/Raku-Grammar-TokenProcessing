@@ -280,14 +280,27 @@ multi sub take-rule-body(Str $ruleKey is copy, %rules) {
 
     given $ruleKey {
         when $_ eq '<number-value>' { return single-qouted 'NUMBER(' ~ random-real(300).round(.01).Str ~ ')'; }
+
         when $_ eq '<integer-value>' { return single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')'; }
-        when $_ eq '<query-text>' { return single-qouted 'QUERYTEXT("' ~ random-word(4).join(' ') ~ '")'; }
-        when $_ eq '<mixed-quoted-variable-names-list>' { return single-qouted 'VARNAMESLIST("' ~ random-word(3)
-                .join(', ') ~ '")'; }
-        when $_ eq '<mixed-quoted-variable-name>' { return single-qouted 'VARNAME("' ~ random-string(chars => 5,
-                ranges => [<y n Y N>, "0" .. "9"]) ~ '")'; }
-        when $_ eq '<variable-name>' { return single-qouted 'VARNAME("' ~ random-string(chars => 5,
-                ranges => [<y n Y N>, "0" .. "9"]) ~ '")'; }
+
+        when $_ eq '<query-text>' { return single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")'; }
+
+        when $_ eq '<mixed-quoted-variable-names-list>' {
+            return single-qouted 'VAR_NAMES_LIST("' ~ random-word(3).join(', ') ~ '")';
+        }
+
+        when $_ ∈ ['<mixed-quoted-variable-name>', '<variable-name>', '<dataset-name>', '<function-name>'] {
+            return single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
+        }
+
+        when $_ ∈ ['<dataset-name>'] {
+            return single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
+        }
+
+        when $_ ∈ ['<function-name>'] {
+            return single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
+        }
+
         when $_ ∈ ['<ws>', '<.ws>'] { return single-qouted ' '; }
     }
 
