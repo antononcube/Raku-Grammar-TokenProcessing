@@ -8,6 +8,7 @@
   ],
   "auth": "zef:antononcube",
   "depends": [
+    "Data::Reshapers:ver<0.2.7+>",
     "Lingua::EN::Stem::Porter:ver<1.2+>",
     "Text::Levenshtein::Damerau:ver<0.3.0+>"
   ],
@@ -16,9 +17,11 @@
   "provides": {
     "Grammar::TokenProcessing": "lib/Grammar/TokenProcessing.rakumod",
     "Grammar::TokenProcessing::Actions::EnhancedTokens": "lib/Grammar/TokenProcessing/Actions/EnhancedTokens.rakumod",
+    "Grammar::TokenProcessing::Actions::RandomSentence": "lib/Grammar/TokenProcessing/Actions/RandomSentence.rakumod",
     "Grammar::TokenProcessing::Actions::TokenNames": "lib/Grammar/TokenProcessing/Actions/TokenNames.rakumod",
     "Grammar::TokenProcessing::Actions::Tokens": "lib/Grammar/TokenProcessing/Actions/Tokens.rakumod",
     "Grammar::TokenProcessing::Actions::TokensHash": "lib/Grammar/TokenProcessing/Actions/TokensHash.rakumod",
+    "Grammar::TokenProcessing::ComprehensiveGrammar": "lib/Grammar/TokenProcessing/ComprehensiveGrammar.rakumod",
     "Grammar::TokenProcessing::Grammar": "lib/Grammar/TokenProcessing/Grammar.rakumod"
   },
   "resources": [],
