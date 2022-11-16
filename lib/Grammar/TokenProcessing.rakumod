@@ -259,13 +259,14 @@ multi enhance-token-specs(Str $program where not $program.IO.e,
 ##===========================================================
 
 sub random-part(Str $ruleBody is copy, $actObj) {
+
     my $res =
             Grammar::TokenProcessing::ComprehensiveGrammar.parse(
                     $ruleBody,
                     rule => 'token-comprehensive-body',
                     actions => $actObj,
                     ).made;
-    #if (not so $res ~~ Str) || $res.trim eq '' { return $ruleBody; }
+
     return $res;
 }
 
@@ -279,9 +280,9 @@ multi sub take-rule-body(Str $ruleKey is copy, %rules) {
     }
 
     given $ruleKey {
-        when $_ eq '<number-value>' { return single-qouted 'NUMBER(' ~ random-real(300).round(.01).Str ~ ')'; }
-
         when $_ eq '<integer-value>' { return single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')'; }
+
+        when $_ ∈ ['<number-value>', '<number>'] { return single-qouted 'NUMBER(' ~ random-real(300).round(.01).Str ~ ')'; }
 
         when $_ eq '<query-text>' { return single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")'; }
 
