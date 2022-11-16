@@ -273,50 +273,35 @@ sub random-part(Str $ruleBody is copy, $actObj) {
 
 ##------------------------------------------------------------
 my %randomTokenGenerators =
-        <ws> => -> { ' ' },
-        <integer-value> => -> { single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
-        <integer> => -> { single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
-        <number-value> => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
-        <number> => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
-        <query-text> => -> { single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
-        <mixed-quoted-variable-name> => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
-        <variable-name> => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
-        <dataset-name> => -> { single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
-        <function-name> => -> { single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' };
+        '<ws>' => -> { ' ' },
+        '<integer-value>' => -> { single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
+        '<integer>' => -> { single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
+        '<number-value>' => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
+        '<number>' => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
+        '<query-text>' => -> { single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
+        '<mixed-quoted-variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
+        '<quoted-variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
+        '<variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
+        '<dataset-name>' => -> { single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
+        '<function-name>' => -> { single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' };
+
+sub default-random-token-generators(-->Hash) is export { %randomTokenGenerators }
 
 ##------------------------------------------------------------
 proto take-rule-body(|) {*}
 
-multi sub take-rule-body(Str $ruleKey is copy, %rules, %tokenGenerators = %()) {
+multi sub take-rule-body(Str $ruleKey is copy,
+                         %rules,
+                         %tokenGenerators) {
 
     if not so $ruleKey.trim ~~ / ^ '<' .*  '>' $ / {
         return $ruleKey;
     }
 
-    given $ruleKey && %tokenGenerators.elems == 0 {
-        when $_ eq '<integer-value>' { return single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')'; }
-
-        when $_ ∈ ['<number-value>', '<number>'] { return single-qouted 'NUMBER(' ~ random-real(300).round(.01).Str ~ ')'; }
-
-        when $_ eq '<query-text>' { return single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")'; }
-
-        when $_ eq '<mixed-quoted-variable-names-list>' {
-            return single-qouted 'VAR_NAMES_LIST("' ~ random-word(3).join(', ') ~ '")';
+    if $ruleKey && %tokenGenerators.elems > 0 {
+        if %tokenGenerators{$ruleKey.trim}:exists {
+            return %tokenGenerators{$ruleKey}.();
         }
-
-        when $_ ∈ ['<mixed-quoted-variable-name>', '<variable-name>' ] {
-            return single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
-        }
-
-        when $_ eq '<dataset-name>' {
-            return single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
-        }
-
-        when $_ eq '<function-name>' {
-            return single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
-        }
-
-        when $_ ∈ ['<ws>', '<.ws>'] { return single-qouted ' '; }
     }
 
     $ruleKey = $ruleKey.Str.trim.substr(1, *- 1).subst(/ ^ \. /, '');
@@ -347,10 +332,10 @@ multi sub take-rule-body(Str $definition is copy) {
 }
 
 ##------------------------------------------------------------
-sub replace-definitions(Str $ruleBody, %rules, $actObj) {
+sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators ) {
 
     my @resBodies = |random-part($ruleBody, $actObj);
-    @resBodies = |@resBodies.map({ $_ ~~ Str ?? take-rule-body($_, %rules) !! '' });
+    @resBodies = |@resBodies.map({ $_ ~~ Str ?? take-rule-body($_, %rules, %tokenGenerators) !! '' });
 
     return @resBodies;
 }
@@ -361,26 +346,38 @@ proto sub generate-random-sentence(Str $ruleBody, %rules, |) is export {*}
 multi sub generate-random-sentence(Str $ruleBody,
                                    %rules,
                                    UInt :$max-iterations = 40,
-                                   UInt :$max-random-list-elements = 6) is export {
+                                   UInt :$max-random-list-elements = 6,
+                                   :$random-token-generators) is export {
 
     my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(:$max-random-list-elements);
 
-    return generate-random-sentence($ruleBody, %rules, $actObj, :$max-iterations);
+    return generate-random-sentence($ruleBody, %rules, $actObj, :$max-iterations, :$random-token-generators);
 }
 
 multi sub generate-random-sentence(Str $ruleBody,
                                    %rules,
                                    $actObj,
-                                   UInt :$max-iterations = 40) is export {
+                                   UInt :$max-iterations = 40,
+                                   :$random-token-generators is copy = Whatever
+                                   ) is export {
 
+    # Process $random-token-generators
+    if $random-token-generators.isa(Whatever) || $random-token-generators.isa(WhateverCode) {
+        $random-token-generators = default-random-token-generators();
+    }
+
+    die "The argument random-token-generators is expected to be Whatever, WhateverCode, or a Map of token names to functions."
+    unless $random-token-generators ~~ Map;
+
+    # Main loop
     my @res = random-part($ruleBody, $actObj);
-    @res = |replace-definitions($ruleBody, %rules, $actObj);
+    @res = |replace-definitions($ruleBody, %rules, $actObj, $random-token-generators);
     @res = reallyflat(@res);
     my UInt $k = 0;
     while so @res.join(' ') ~~ / '<' <-[<>]>+ '>' | .+ '|' .+ / && $k++ < $max-iterations {
         #note 'generate-random-sentence : '.uc, $k, ' : ', @res.raku;
         @res = @res.map({ random-part($_, $actObj) });
-        @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules, $actObj) !! '' });
+        @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules, $actObj, $random-token-generators) !! '' });
         @res = reallyflat(@res);
     }
     #note 'generate-random-sentence : '.uc, 'END : ', @res.raku;
