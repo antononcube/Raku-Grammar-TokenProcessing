@@ -12,6 +12,8 @@ sub single-qouted(Str $s) { '\'' ~ $s ~ '\'' }
 class Grammar::TokenProcessing::Actions::RandomSentence
         is Grammar::TokenProcessing::Actions::Tokens {
 
+    has $.max-random-list-elements = 12;
+
     method TOP($/) {
         self.gathered-tokens = $/.values>>.made.grep({ $_ ~~ Pair && $_.key.defined && $_.key.chars > 0 });
         make self.gathered-tokens;
@@ -35,14 +37,14 @@ class Grammar::TokenProcessing::Actions::RandomSentence
         my $rep = $<repeat-spec> ?? $<repeat-spec>.Str !! '';
         make do given $rep {
             when so $<repeat-spec><repeat-spec-for-lists> {
-                my @res = (1...(1..12).pick).map({ $<element>.made });
+                my @res = (1...(1..$!max-random-list-elements).pick).map({ $<element>.made });
                 my $sep = $<repeat-spec><repeat-spec-for-lists><repeat-spec-delim>.made;
                 $sep = $sep eq 'ws' ?? ' ' !! $sep;
                 ((@res Z ($sep xx @res.elems)).flat)[^(*-1)]
             }
             when $_ eq '?' { rand > 0.5 ?? $<element>.made !! '' }
-            when $_ eq '+' { (1...(1..12).pick).map({ $<element>.made }).unique.Array }
-            when $_ eq '*' { (0...(1..12).pick).map({ $<element>.made }).unique.Array }
+            when $_ eq '+' { (1...(1..$!max-random-list-elements).pick).map({ $<element>.made }).unique.Array }
+            when $_ eq '*' { (0...(1..$!max-random-list-elements).pick).map({ $<element>.made }).unique.Array }
             default { $<element>.made }
          }
     }
