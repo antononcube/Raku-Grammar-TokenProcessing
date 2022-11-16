@@ -24,7 +24,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token-spec-list { <token-spec>+ % \s+ }
 
-  token delim { \s* '|' \s* }
+  token delim { \s* '|' | '||' \s* }
 
   regex token-simple-body { \s* [ <token-spec-list>+ % <.delim> ] \s* }
 
