@@ -1,0 +1,27 @@
+#!/usr/bin/env perl6
+use v6.d;
+
+use Grammar::TokenProcessing;
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+#| Generates random sentences for a given grammar.
+multi MAIN(
+        Str $grammar,                        #= Grammar name.
+        Str $rule-body,                      #= Rule body (to start generation with.)
+        UInt $n = 10,                        #= Number of sentences.
+        UInt :$max-random-list-elements = 6  #= Max number of elements to use generate random lists.
+           ) {
+
+    try require ::($grammar);
+    if ::($grammar) ~~ Failure {
+        die "Cannot find grammar named: $grammar.";
+    }
+
+    my $focusGrammar = ::($grammar);
+    my %focusRules = $focusGrammar.^method_table;
+
+    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, max-iterations => 40).subst("' '", " "):g }).sort.unique;
+
+    say @randSentences.join("\n");
+}
