@@ -22,7 +22,7 @@ multi MAIN(
     my $focusGrammar = ::($grammar);
     my %focusRules = $focusGrammar.^method_table;
 
-    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-iterations)});
+    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-random-list-elements, :$max-iterations)});
 
     say @randSentences.join("\n");
 }
