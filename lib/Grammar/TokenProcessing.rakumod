@@ -270,16 +270,30 @@ sub random-part(Str $ruleBody is copy, $actObj) {
     return $res;
 }
 
+
+##------------------------------------------------------------
+my %randomTokenGenerators =
+        <ws> => -> { ' ' },
+        <integer-value> => -> { single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
+        <integer> => -> { single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
+        <number-value> => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
+        <number> => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
+        <query-text> => -> { single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
+        <mixed-quoted-variable-name> => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
+        <variable-name> => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
+        <dataset-name> => -> { single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
+        <function-name> => -> { single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' };
+
 ##------------------------------------------------------------
 proto take-rule-body(|) {*}
 
-multi sub take-rule-body(Str $ruleKey is copy, %rules) {
+multi sub take-rule-body(Str $ruleKey is copy, %rules, %tokenGenerators = %()) {
 
     if not so $ruleKey.trim ~~ / ^ '<' .*  '>' $ / {
         return $ruleKey;
     }
 
-    given $ruleKey {
+    given $ruleKey && %tokenGenerators.elems == 0 {
         when $_ eq '<integer-value>' { return single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')'; }
 
         when $_ ∈ ['<number-value>', '<number>'] { return single-qouted 'NUMBER(' ~ random-real(300).round(.01).Str ~ ')'; }
@@ -290,15 +304,15 @@ multi sub take-rule-body(Str $ruleKey is copy, %rules) {
             return single-qouted 'VAR_NAMES_LIST("' ~ random-word(3).join(', ') ~ '")';
         }
 
-        when $_ ∈ ['<mixed-quoted-variable-name>', '<variable-name>', '<dataset-name>', '<function-name>'] {
+        when $_ ∈ ['<mixed-quoted-variable-name>', '<variable-name>' ] {
             return single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
         }
 
-        when $_ ∈ ['<dataset-name>'] {
+        when $_ eq '<dataset-name>' {
             return single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
         }
 
-        when $_ ∈ ['<function-name>'] {
+        when $_ eq '<function-name>' {
             return single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")';
         }
 
