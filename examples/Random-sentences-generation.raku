@@ -18,6 +18,8 @@ use Mathematica::Grammar;
 use Chemistry::Stoichiometry::Grammar;
 use Markdown::Grammar;
 
+use Data::Generators;
+
 #say Grammar::TokenProcessing::Grammar.parse('<table-noun>?', rule => 'repetition');
 #say Grammar::TokenProcessing::Grammar.parse(' <rows> | <records>', rule => 'alternation');
 #say Grammar::TokenProcessing::Grammar.parse('[ <rows> | <records> ]', rule => 'group');
@@ -28,11 +30,11 @@ use Markdown::Grammar;
 #my $focusGrammar = DSL::English::ClassificationWorkflows::Grammar;
 #my $focusGrammar = DSL::English::LatentSemanticAnalysisWorkflows::Grammar;
 #my $focusGrammar = DSL::English::RecommenderWorkflows::Grammar;
-my $focusGrammar = DSL::English::QuantileRegressionWorkflows::Grammar;
+#my $focusGrammar = DSL::English::QuantileRegressionWorkflows::Grammar;
 
 #my $focusGrammar = Mathematica::Grammar;
 #my $focusGrammar = Markdown::Grammar;
-#my $focusGrammar = Chemistry::Stoichiometry::Grammar;
+my $focusGrammar = Chemistry::Stoichiometry::Grammar;
 
 #my $focusGrammar = grammar LLoveParser {
 #    rule  TOP  { <workflow-command> }
@@ -54,15 +56,28 @@ my %focusRules = $focusGrammar.^method_table;
 
 say '=' x 120;
 
-my $ruleBody = '<workflow-command>';
+#my $ruleBody = '<workflow-command>';
 #my $ruleBody = '<topics-extraction-command>';
 #my $ruleBody = '<make-classifier-command>';
-#my $ruleBody = '<mixture>';
+my $ruleBody = '<molecule>';
 
 
 my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(max-random-list-elements => 6);
 
 $actObj = $actObj but DSL::Shared::Roles::CommonStructures.new;
-my @randSentences = (^100).map({ generate-random-sentence($ruleBody, %focusRules, $actObj, max-iterations => 40).subst("' '", " "):g }).sort.unique;
+
+my %randomTokenGenerators = default-random-token-generators;
+%randomTokenGenerators{'<number-value>'} = -> { random-real(10).round.Str };
+%randomTokenGenerators{'<number>'} = %randomTokenGenerators{'<number-value>'};
+%randomTokenGenerators{'<integer-value>'} = %randomTokenGenerators{'<number-value>'};
+%randomTokenGenerators{'<integer>'} = %randomTokenGenerators{'<number-value>'};
+
+
+my @randSentences = (^10).map({ generate-random-sentence(
+        $ruleBody,
+        %focusRules,
+        $actObj,
+        max-iterations => 40,
+        random-token-generators => %randomTokenGenerators ).subst("' '", " "):g }).sort.unique;
 
 .say for @randSentences;
