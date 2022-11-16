@@ -10,7 +10,8 @@ multi MAIN(
         Str $grammar,                        #= Grammar name.
         Str $rule-body,                      #= Rule body (to start generation with.)
         UInt $n = 10,                        #= Number of sentences.
-        UInt :$max-random-list-elements = 6  #= Max number of elements to use generate random lists.
+        UInt :$max-random-list-elements = 6, #= Max number of elements to use generate random lists.
+        UInt :$max-iterations = 40           #= Max number of interation
            ) {
 
     try require ::($grammar);
@@ -21,7 +22,7 @@ multi MAIN(
     my $focusGrammar = ::($grammar);
     my %focusRules = $focusGrammar.^method_table;
 
-    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, max-iterations => 40).subst("' '", " "):g }).sort.unique;
+    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-iterations)});
 
     say @randSentences.join("\n");
 }
