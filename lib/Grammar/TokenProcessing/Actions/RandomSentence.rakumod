@@ -7,7 +7,7 @@ sub reallyflat (+@list) {
     gather @list.deepmap: *.take
 }
 
-sub single-qouted(Str $s) { '\'' ~ $s ~ '\'' }
+sub to-single-qouted(Str $s) { '\'' ~ $s ~ '\'' }
 
 class Grammar::TokenProcessing::Actions::RandomSentence
         is Grammar::TokenProcessing::Actions::Tokens {
@@ -23,6 +23,14 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
     method token-name-spec($/) { make $/.Str; }
 
+    method white-space-regex($/) {
+        make do given $/.Str {
+            when $_ ∈ ['\\h*', '\\s*'] { ' ' x (^4).pick }
+            when $_ ∈ ['\\h+', '\\s+'] { ' ' x (1..4).pick }
+            default { $/.Str }
+        };
+    }
+
     method alphad($/) { make $/.Str; }
 
     method token-renamed-spec($/) { make '<' ~ $<alphad>.join() ~ '>'; }
@@ -32,7 +40,7 @@ class Grammar::TokenProcessing::Actions::RandomSentence
     method repeat-spec-delim($/) {
         my $sep = $/.Str;
         if $sep.trim eq '<list-separator>' {
-            $sep = single-qouted( rand > 0.5 ?? ', ' !! 'and' );
+            $sep = to-single-qouted( rand > 0.5 ?? ', ' !! 'and' );
         }
         make $sep;
     }
