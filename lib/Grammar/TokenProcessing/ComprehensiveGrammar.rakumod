@@ -12,7 +12,7 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
   #--------------------------------------------------------------------
   # Comprehensive body definitions
   #--------------------------------------------------------------------
-  regex token-spec-element { <token-spec> | <token-name-spec> }
+  regex token-spec-element { <token-spec> | <token-name-spec> | <token-renamed-spec> }
   regex repeat-spec-delim { .* }
   token quantifier { '+' | '*' }
   regex repeat-spec-for-lists { <quantifier> \h* '%' \h* <repeat-spec-delim> }
