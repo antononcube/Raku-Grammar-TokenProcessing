@@ -23,6 +23,10 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
     method token-name-spec($/) { make $/.Str; }
 
+    method alphad($/) { make $/.Str; }
+
+    method token-renamed-spec($/) { make '<' ~ $<alphad>.join() ~ '>'; }
+
     method token-spec-element($/) { make $/.values[0].made; }
 
     method repeat-spec-delim($/) {
