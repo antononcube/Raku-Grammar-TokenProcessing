@@ -55,8 +55,14 @@ our sub tree($dir, $extension = Whatever) {
     return @files;
 }
 
-our sub single-qouted(Str $s) {
+our sub to-single-qouted(Str $s) {
     '\'' ~ $s ~ '\''
+}
+
+our sub to-unqouted(Str $ss is copy) {
+    s/ ^ '\'' (.*) '\'' $ / $0 / with $ss;
+    s/ ^ '"' (.*) '"' $ / $0 / with $ss;
+    return $ss;
 }
 
 ##===========================================================
@@ -274,17 +280,17 @@ sub random-part(Str $ruleBody is copy, $actObj) {
 ##------------------------------------------------------------
 my %randomTokenGenerators =
         '<ws>' => -> { ' ' },
-        '<integer-value>' => -> { single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
-        '<integer>' => -> { single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
-        '<number-value>' => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
-        '<number>' => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
-        '<query-text>' => -> { single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
-        '<mixed-quoted-variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<quoted-variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<dataset-name>' => -> { single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<function-name>' => -> { single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<raku-module-name>' => -> { single-qouted 'MODULE_NAME("' ~ random-string(chars => 8, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' };
+        '<integer-value>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
+        '<integer>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
+        '<number-value>' => -> { to-single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
+        '<number>' => -> { to-single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
+        '<query-text>' => -> { to-single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
+        '<mixed-quoted-variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<quoted-variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<dataset-name>' => -> { to-single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<function-name>' => -> { to-single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<raku-module-name>' => -> { to-single-qouted 'MODULE_NAME("' ~ random-string(chars => 8, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' };
 
 sub default-random-token-generators(-->Hash) is export { %randomTokenGenerators }
 
@@ -348,18 +354,20 @@ multi sub generate-random-sentence(Str $ruleBody,
                                    %rules,
                                    UInt :$max-iterations = 40,
                                    UInt :$max-random-list-elements = 6,
-                                   :$random-token-generators) is export {
+                                   :$random-token-generators,
+                                   Str :$sep = ' ') is export {
 
     my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(:$max-random-list-elements);
 
-    return generate-random-sentence($ruleBody, %rules, $actObj, :$max-iterations, :$random-token-generators);
+    return generate-random-sentence($ruleBody, %rules, $actObj, :$max-iterations, :$random-token-generators, :$sep);
 }
 
 multi sub generate-random-sentence(Str $ruleBody,
                                    %rules,
                                    $actObj,
                                    UInt :$max-iterations = 40,
-                                   :$random-token-generators is copy = Whatever
+                                   :$random-token-generators is copy = Whatever,
+                                   Str :$sep = ' '
                                    ) is export {
 
     # Process $random-token-generators
@@ -382,5 +390,5 @@ multi sub generate-random-sentence(Str $ruleBody,
         @res = reallyflat(@res);
     }
     #note 'generate-random-sentence : '.uc, 'END : ', @res.raku;
-    return @res.grep({ $_.trim.chars > 0 }).join(' ').trim;
+    return @res.grep({ $_.trim.chars > 0 })>>.&to-unqouted.join($sep).trim;
 }
