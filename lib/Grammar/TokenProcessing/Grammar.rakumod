@@ -18,6 +18,8 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token-name-spec { [\w | '-' | ':' | '.' | '<' | '>' ]+ }
 
+  token white-space-regex { '\\h' [ '*' | '+' ] }
+
   token alphad { <alpha> | '-' }
 
   token token-renamed-spec { '<' \h* <.alphad>+ \h* '=' \h* \.? <alphad>+ \h* '>' }
