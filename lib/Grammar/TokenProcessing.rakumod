@@ -279,11 +279,12 @@ my %randomTokenGenerators =
         '<number-value>' => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
         '<number>' => -> { single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
         '<query-text>' => -> { single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
-        '<mixed-quoted-variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
-        '<quoted-variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
-        '<variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
-        '<dataset-name>' => -> { single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' },
-        '<function-name>' => -> { single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => [<y n Y N>, "0" .. "9"]) ~ '")' };
+        '<mixed-quoted-variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<quoted-variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<variable-name>' => -> { single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<dataset-name>' => -> { single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<function-name>' => -> { single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<raku-module-name>' => -> { single-qouted 'MODULE_NAME("' ~ random-string(chars => 8, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' };
 
 sub default-random-token-generators(-->Hash) is export { %randomTokenGenerators }
 
