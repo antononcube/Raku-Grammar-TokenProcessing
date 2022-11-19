@@ -60,8 +60,8 @@ our sub to-single-qouted(Str $s) {
 }
 
 our sub to-unqouted(Str $ss is copy) {
-    s/ ^ '\'' (.*) '\'' $ / $0 / with $ss;
-    s/ ^ '"' (.*) '"' $ / $0 / with $ss;
+    if $ss ~~ / ^ '\'' (.*) '\'' $ / { return $0; }
+    if $ss ~~ / ^ '"' (.*) '"' $ / { return $0; }
     return $ss;
 }
 
