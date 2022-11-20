@@ -39,8 +39,13 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
     method repeat-spec-delim($/) {
         my $sep = $/.Str;
-        if $sep.trim eq '<list-separator>' {
-            $sep = to-single-qouted( rand > 0.5 ?? ', ' !! 'and' );
+        given $sep.trim {
+            when '<list-separator>' {
+                $sep = to-single-qouted( [', ', 'and'].pick );
+            }
+        when $_ ~~ / '<list-separator>' \h* '?' / {
+                $sep = to-single-qouted( [', ', 'and', ' '].pick );
+            }
         }
         make $sep;
     }
@@ -51,7 +56,7 @@ class Grammar::TokenProcessing::Actions::RandomSentence
             when so $<repeat-spec><repeat-spec-for-lists> {
                 my @res = (1...(1..$!max-random-list-elements).pick).map({ $<element>.made });
                 my $sep = $<repeat-spec><repeat-spec-for-lists><repeat-spec-delim>.made;
-                $sep = $sep eq 'ws' ?? ' ' !! $sep;
+                $sep = $sep.trim eq 'ws' ?? ' ' !! $sep;
                 ((@res Z ($sep xx @res.elems)).flat)[^(*-1)]
             }
             when $_ eq '?' { rand > 0.5 ?? $<element>.made !! '' }
