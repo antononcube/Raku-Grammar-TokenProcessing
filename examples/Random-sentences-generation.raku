@@ -19,6 +19,7 @@ use Chemistry::Stoichiometry::Grammar;
 use Markdown::Grammar;
 
 use Data::Generators;
+use Data::Reshapers;
 
 #say Grammar::TokenProcessing::Grammar.parse('<table-noun>?', rule => 'repetition');
 #say Grammar::TokenProcessing::Grammar.parse(' <rows> | <records>', rule => 'alternation');
@@ -30,11 +31,11 @@ use Data::Generators;
 #my $focusGrammar = DSL::English::ClassificationWorkflows::Grammar;
 #my $focusGrammar = DSL::English::LatentSemanticAnalysisWorkflows::Grammar;
 #my $focusGrammar = DSL::English::RecommenderWorkflows::Grammar;
-#my $focusGrammar = DSL::English::QuantileRegressionWorkflows::Grammar;
+my $focusGrammar = DSL::English::QuantileRegressionWorkflows::Grammar;
 
 #my $focusGrammar = Mathematica::Grammar;
 #my $focusGrammar = Markdown::Grammar;
-my $focusGrammar = Chemistry::Stoichiometry::Grammar;
+#my $focusGrammar = Chemistry::Stoichiometry::Grammar;
 
 #my $focusGrammar = grammar LLoveParser {
 #    rule  TOP  { <workflow-command> }
@@ -57,27 +58,35 @@ my %focusRules = $focusGrammar.^method_table;
 say '=' x 120;
 
 #my $ruleBody = '<workflow-command>';
+my $ruleBody = '<moving-func-command>';
 #my $ruleBody = '<topics-extraction-command>';
 #my $ruleBody = '<make-classifier-command>';
-my $ruleBody = '<molecule>';
+#my $ruleBody = '<chemical-equation>';
 
 
-my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(max-random-list-elements => 6);
+my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(max-random-list-elements => 3);
 
-$actObj = $actObj but DSL::Shared::Roles::CommonStructures.new;
+#$actObj = $actObj but DSL::Shared::Roles::CommonStructures.new;
 
 my %randomTokenGenerators = default-random-token-generators;
 %randomTokenGenerators{'<number-value>'} = -> { random-real(10).round.Str };
 %randomTokenGenerators{'<number>'} = %randomTokenGenerators{'<number-value>'};
-%randomTokenGenerators{'<integer-value>'} = %randomTokenGenerators{'<number-value>'};
-%randomTokenGenerators{'<integer>'} = %randomTokenGenerators{'<number-value>'};
+%randomTokenGenerators{'<integer-value>'} =  -> { random-real(10).round.Str };
+%randomTokenGenerators{'<integer>'} = %randomTokenGenerators{'<integer-value>'};
+%randomTokenGenerators{'<yield-symbol>'} = -> { ['=', '->'].pick };
+%randomTokenGenerators{'<white-space-regex>'} = '';
+#%randomTokenGenerators{'<dataset-name>'} = -> { Grammar::TokenProcessing::single-qouted('DATASET_NAME') }
+#%randomTokenGenerators{'<variable-name>'} = -> { Grammar::TokenProcessing::single-qouted('VAR_NAME') }
 
 
-my @randSentences = (^10).map({ generate-random-sentence(
+my @randSentences = (^40).map({ generate-random-sentence(
         $ruleBody,
         %focusRules,
         $actObj,
         max-iterations => 40,
-        random-token-generators => %randomTokenGenerators ).subst("' '", " "):g }).sort.unique;
+        random-token-generators => %randomTokenGenerators,
+        sep => ' ') }).sort.unique;
 
-.say for @randSentences;
+#say to-pretty-table(@randSentences.map({ Sentence => $_ }));
+#say to-pretty-table(transpose(@randSentences.kv));
+say to-pretty-table(@randSentences.pairs, align=>'l', field-names=><Key Value>);
