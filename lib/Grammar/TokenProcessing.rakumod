@@ -290,7 +290,9 @@ my %randomTokenGenerators =
         '<variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
         '<dataset-name>' => -> { to-single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
         '<function-name>' => -> { to-single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<raku-module-name>' => -> { to-single-qouted 'MODULE_NAME("' ~ random-string(chars => 8, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' };
+        '<raku-module-name>' => -> { to-single-qouted 'MODULE_NAME("' ~ random-string(chars => 8, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<list-separator>' => -> { to-single-qouted [',', 'and'].pick },
+        '<list-separator>?' => -> { to-single-qouted [',', 'and', ' '].pick };
 
 sub default-random-token-generators(-->Hash) is export { %randomTokenGenerators }
 

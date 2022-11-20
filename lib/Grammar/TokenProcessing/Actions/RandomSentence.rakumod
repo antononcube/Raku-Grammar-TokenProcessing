@@ -38,15 +38,20 @@ class Grammar::TokenProcessing::Actions::RandomSentence
     method token-spec-element($/) { make $/.values[0].made; }
 
     method repeat-spec-delim($/) {
+        # The repetitions delimiter matcher is not comprehensive.
+        # Hence, we just stringify it.
         my $sep = $/.Str;
-        given $sep.trim {
-            when '<list-separator>' {
-                $sep = to-single-qouted( [', ', 'and'].pick );
-            }
-        when $_ ~~ / '<list-separator>' \h* '?' / {
-                $sep = to-single-qouted( [', ', 'and', ' '].pick );
-            }
-        }
+        # Initially this was hard-coded.
+        # It seems better to move it to the generation rules hash.
+        # See %randomTokenGenerators in ../TokenProcessing.rakumod .
+        #given $sep.trim {
+        #    when '<list-separator>' {
+        #        $sep = to-single-qouted( [', ', 'and'].pick );
+        #    }
+        #when $_ ~~ / '<list-separator>' \h* '?' / {
+        #        $sep = to-single-qouted( [', ', 'and', ' '].pick );
+        #    }
+        #}
         make $sep;
     }
 
