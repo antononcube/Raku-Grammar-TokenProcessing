@@ -283,7 +283,7 @@ my %randomTokenGenerators =
         '<integer-value>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
         '<integer>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
         '<number-value>' => -> { to-single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
-        '<number>' => -> { to-single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
+        '<number>' => -> { to-single-qouted 'NUMBER(' ~ random-real(300).round.Str ~ ')' },
         '<query-text>' => -> { to-single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
         '<mixed-quoted-variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
         '<quoted-variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
@@ -332,7 +332,7 @@ multi sub take-rule-body(Str $definition is copy) {
     #note $definition.raku;
     $definition = $definition.subst(/ '|' \h* '([\w]+) <?{' .* '}>' /, '').subst(':i', '');
     #note $definition.raku;
-    if $definition ~~ / ^ (.*) '{' \h* (.*) \h* '}' (.*) $ / { $definition = ~$1  };
+    if $definition ~~ / ^ (<-[{]>*) '{' \h* (.*) \h* '}' (.*) $ / { $definition = ~$1  };
     $definition = $definition.subst("\n", ''):g;
     #note 'take-rule-body : '.uc, $definition.raku;
     return $definition.trim;
