@@ -57,8 +57,8 @@ my %focusRules = $focusGrammar.^method_table;
 
 say '=' x 120;
 
-#my $ruleBody = '<workflow-command>';
-my $ruleBody = '<moving-func-command>';
+my $ruleBody = '<workflow-command>';
+#my $ruleBody = '<moving-func-command>';
 #my $ruleBody = '<topics-extraction-command>';
 #my $ruleBody = '<make-classifier-command>';
 #my $ruleBody = '<chemical-equation>';
@@ -78,15 +78,18 @@ my %randomTokenGenerators = default-random-token-generators;
 #%randomTokenGenerators{'<dataset-name>'} = -> { Grammar::TokenProcessing::single-qouted('DATASET_NAME') }
 #%randomTokenGenerators{'<variable-name>'} = -> { Grammar::TokenProcessing::single-qouted('VAR_NAME') }
 
-
+# Note that if the separator is not a string a list is returned.
+# The lists can be seen with the .deepmap line print-out.
+# In that case unique has to be called with the as => { $_.join(' ') } .
 my @randSentences = (^40).map({ generate-random-sentence(
         $ruleBody,
         %focusRules,
         $actObj,
         max-iterations => 40,
         random-token-generators => %randomTokenGenerators,
-        sep => ' ') }).sort.unique;
+        sep => Whatever) }).sort.unique(as => { $_.join(' ') });
 
 #say to-pretty-table(@randSentences.map({ Sentence => $_ }));
 #say to-pretty-table(transpose(@randSentences.kv));
+#say to-pretty-table(@randSentences.deepmap(*.raku).pairs, align=>'l', field-names=><Key Value>);
 say to-pretty-table(@randSentences.pairs, align=>'l', field-names=><Key Value>);
