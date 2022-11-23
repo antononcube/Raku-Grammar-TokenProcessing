@@ -60,8 +60,8 @@ our sub to-single-qouted(Str $s) {
 }
 
 our sub to-unqouted(Str $ss is copy) {
-    if $ss ~~ / ^ '\'' (.*) '\'' $ / { return $0; }
-    if $ss ~~ / ^ '"' (.*) '"' $ / { return $0; }
+    if $ss ~~ / ^ '\'' (.*) '\'' $ / { return ~$0; }
+    if $ss ~~ / ^ '"' (.*) '"' $ / { return ~$0; }
     return $ss;
 }
 
@@ -177,8 +177,7 @@ multi enhance-token-specs(Str $fileName where $fileName.IO.e,
     #| Ingest file content
     my $program = slurp($fileName);
 
-    return enhance-token-specs($program, $output, :$add-protos, :$sym-name, :$add-exclusions, :$stem-rules,
-            :$nearest-neighbors-rules, :$method, :$func-name)
+    return enhance-token-specs($program, $output, :$add-protos, :$sym-name, :$add-exclusions, :$stem-rules, :$nearest-neighbors-rules, :$method, :$func-name)
 }
 
 multi enhance-token-specs(Str $program where not $program.IO.e,
@@ -276,7 +275,6 @@ sub random-part(Str $ruleBody is copy, $actObj) {
     return $res;
 }
 
-
 ##------------------------------------------------------------
 my %randomTokenGenerators =
         '<ws>' => -> { ' ' },
@@ -350,6 +348,13 @@ sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators ) {
 }
 
 ##------------------------------------------------------------
+#| Generate random sentence.
+#| C<$ruleBody> : The body of the rule to start generating with.
+#| C<%rules> : Rule-to-definition pairs.
+#| C<$max-iterations> : Max iterations to recursively replace rule definitions.
+#| C<$max-random-list-elements> : Max number of elements in lists (to pick with.)
+#| C<$random-token-generators> : Rule-to-function pairs used to generate leaf litterals.
+#| C<$sep> : Separator of the join literals; if not a string no joining is done.
 proto sub generate-random-sentence(Str $ruleBody, %rules, |) is export {*}
 
 multi sub generate-random-sentence(Str $ruleBody,
@@ -357,7 +362,7 @@ multi sub generate-random-sentence(Str $ruleBody,
                                    UInt :$max-iterations = 40,
                                    UInt :$max-random-list-elements = 6,
                                    :$random-token-generators,
-                                   Str :$sep = ' ') is export {
+                                   :$sep = ' ') is export {
 
     my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(:$max-random-list-elements);
 
@@ -369,7 +374,7 @@ multi sub generate-random-sentence(Str $ruleBody,
                                    $actObj,
                                    UInt :$max-iterations = 40,
                                    :$random-token-generators is copy = Whatever,
-                                   Str :$sep = ' '
+                                   :$sep = ' '
                                    ) is export {
 
     # Process $random-token-generators
@@ -391,6 +396,11 @@ multi sub generate-random-sentence(Str $ruleBody,
         @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules, $actObj, $random-token-generators) !! '' });
         @res = reallyflat(@res);
     }
+
     #note 'generate-random-sentence : '.uc, 'END : ', @res.raku;
-    return @res.grep({ $_.trim.chars > 0 })>>.&to-unqouted.join($sep).trim;
+    # Post-process
+    @res = @res.grep({ $_.trim.chars > 0 })>>.&to-unqouted;
+
+    # Result
+    return $sep ~~ Str ?? @res.join($sep).trim !! @res;
 }
