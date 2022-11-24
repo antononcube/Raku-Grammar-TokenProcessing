@@ -36,9 +36,9 @@ multi MAIN(
     my $sep2 = $sep eq 'NONE' ?? Whatever !! $sep;
 
     # Process syms
-    my $syms2 = $syms.words;
+    my @syms2 = |$syms.words;
 
-    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-iterations, :$max-random-list-elements, sep => $sep2, syms => $syms2)});
+    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-iterations, :$max-random-list-elements, sep => $sep2, syms => @syms2)});
 
     if $sep eq 'NONE' {
         @randSentences = @randSentences>>.raku
