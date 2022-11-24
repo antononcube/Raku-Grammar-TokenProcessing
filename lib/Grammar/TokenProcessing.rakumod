@@ -299,7 +299,8 @@ proto take-rule-body(|) {*}
 
 multi sub take-rule-body(Str $ruleKey is copy,
                          %rules,
-                         %tokenGenerators) {
+                         %tokenGenerators,
+                         Str $sym = 'English') {
 
     if not so $ruleKey.trim ~~ / ^ '<' .*  '>' $ / {
         return $ruleKey;
@@ -314,8 +315,8 @@ multi sub take-rule-body(Str $ruleKey is copy,
     $ruleKey = $ruleKey.Str.trim.substr(1, *- 1).subst(/ ^ \. /, '');
 
     if %rules{$ruleKey}:exists {
-        if %rules{$ruleKey ~ ':sym<English>'}:exists {
-            $ruleKey = $ruleKey ~ ':sym<English>';
+        if %rules{$ruleKey ~ ':sym<' ~ $sym ~ '>'}:exists {
+            $ruleKey = $ruleKey ~ ':sym<' ~  $sym  ~ '>';
         }
         my $ruleVal = %rules{$ruleKey}.gist;
         if not so $ruleVal ~~ Str {
@@ -339,10 +340,10 @@ multi sub take-rule-body(Str $definition is copy) {
 }
 
 ##------------------------------------------------------------
-sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators ) {
+sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators, Str $sym = 'English' ) {
 
     my @resBodies = |random-part($ruleBody, $actObj);
-    @resBodies = |@resBodies.map({ $_ ~~ Str ?? take-rule-body($_, %rules, %tokenGenerators) !! '' });
+    @resBodies = |@resBodies.map({ $_ ~~ Str ?? take-rule-body($_, %rules, %tokenGenerators, $sym) !! '' });
 
     return @resBodies;
 }
@@ -353,20 +354,22 @@ sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators ) {
 #| C<%rules> : Rule-to-definition pairs.
 #| C<$max-iterations> : Max iterations to recursively replace rule definitions.
 #| C<$max-random-list-elements> : Max number of elements in lists (to pick with.)
-#| C<$random-token-generators> : Rule-to-function pairs used to generate leaf litterals.
+#| C<$random-token-generators> : Rule-to-function pairs used to generate leaf literals.
 #| C<$sep> : Separator of the join literals; if not a string no joining is done.
+#| C<$sym> : Sym string to concretize proto rules with.
 proto sub generate-random-sentence(Str $ruleBody, %rules, |) is export {*}
 
 multi sub generate-random-sentence(Str $ruleBody,
                                    %rules,
                                    UInt :$max-iterations = 40,
                                    UInt :$max-random-list-elements = 6,
-                                   :$random-token-generators,
-                                   :$sep = ' ') is export {
+                                   :$random-token-generators = Whatever,
+                                   :$sep = ' ',
+                                   :$sym = 'English') is export {
 
     my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(:$max-random-list-elements);
 
-    return generate-random-sentence($ruleBody, %rules, $actObj, :$max-iterations, :$random-token-generators, :$sep);
+    return generate-random-sentence($ruleBody, %rules, $actObj, :$max-iterations, :$random-token-generators, :$sep, :$sym);
 }
 
 multi sub generate-random-sentence(Str $ruleBody,
@@ -374,7 +377,8 @@ multi sub generate-random-sentence(Str $ruleBody,
                                    $actObj,
                                    UInt :$max-iterations = 40,
                                    :$random-token-generators is copy = Whatever,
-                                   :$sep = ' '
+                                   :$sep = ' ',
+                                   :$sym is copy = 'English'
                                    ) is export {
 
     # Process $random-token-generators
@@ -385,15 +389,17 @@ multi sub generate-random-sentence(Str $ruleBody,
     die "The argument random-token-generators is expected to be Whatever, WhateverCode, or a Map of token names to functions."
     unless $random-token-generators ~~ Map;
 
+    if $sym.isa(Whatever) { $sym = 'English'; }
+
     # Main loop
     my @res = random-part($ruleBody, $actObj);
-    @res = |replace-definitions($ruleBody, %rules, $actObj, $random-token-generators);
+    @res = |replace-definitions($ruleBody, %rules, $actObj, $random-token-generators, $sym);
     @res = reallyflat(@res);
     my UInt $k = 0;
     while so @res.join(' ') ~~ / '<' <-[<>]>+ '>' | .+ '|' .+ / && $k++ < $max-iterations {
         #note 'generate-random-sentence : '.uc, $k, ' : ', @res.raku;
         @res = @res.map({ random-part($_, $actObj) });
-        @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules, $actObj, $random-token-generators) !! '' });
+        @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules, $actObj, $random-token-generators, $sym) !! '' });
         @res = reallyflat(@res);
     }
 
