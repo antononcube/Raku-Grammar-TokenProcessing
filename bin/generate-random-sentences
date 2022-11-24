@@ -1,4 +1,8 @@
 #!/usr/bin/env perl6
+
+# Example to test with:
+#  generate-random-sentences DSL::Bulgarian::QuantileRegressionWorkflows::Grammar '<workflow-command>' 10 --syms='Bulgarian English'
+
 use v6.d;
 
 use Grammar::TokenProcessing;
