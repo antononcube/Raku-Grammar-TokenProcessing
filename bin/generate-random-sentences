@@ -13,7 +13,7 @@ multi MAIN(
         UInt :$max-iterations = 40,          #= Max number of recursive rule replacement iterations.
         UInt :$max-random-list-elements = 6, #= Max number of elements to use generate random lists.
         Str :$sep = ' ',                     #= Separator of the join literals; if 'NONE' Raku code lists are returned.
-        Str :$sym = 'English'                #= Sym string to concretize proto rules with.
+        Str :$syms  = 'English'                #= A string that is a sym or a space separated syms to concretize proto rules with.
            ) {
 
     try require ::($grammar);
@@ -28,8 +28,13 @@ multi MAIN(
 
     my %focusRules = $focusGrammar.^method_table;
 
+    # Process sep
     my $sep2 = $sep eq 'NONE' ?? Whatever !! $sep;
-    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-iterations, :$max-random-list-elements, sep => $sep2, :$sym)});
+
+    # Process syms
+    my $syms2 = $syms.words;
+
+    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-iterations, :$max-random-list-elements, sep => $sep2, :$syms2)});
 
     if $sep eq 'NONE' {
         @randSentences = @randSentences>>.raku
