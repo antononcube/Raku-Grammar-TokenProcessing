@@ -12,7 +12,8 @@ multi MAIN(
         UInt $n = 10,                        #= Number of sentences.
         UInt :$max-iterations = 40,          #= Max number of recursive rule replacement iterations.
         UInt :$max-random-list-elements = 6, #= Max number of elements to use generate random lists.
-        Str :$sep = ' '                      #= Separator.
+        Str :$sep = ' ',                     #= Separator of the join literals; if 'NONE' Raku code lists are returned.
+        Str :$sym = 'English'                #= Sym string to concretize proto rules with.
            ) {
 
     try require ::($grammar);
@@ -21,9 +22,17 @@ multi MAIN(
     }
 
     my $focusGrammar = ::($grammar);
+
+    die "The first argument is expected to be of type Grammar."
+    unless $focusGrammar ~~ Grammar;
+
     my %focusRules = $focusGrammar.^method_table;
 
-    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-iterations, :$max-random-list-elements, :$sep)});
+    my $sep2 = $sep eq 'NONE' ?? Whatever !! $sep;
+    my @randSentences = (^$n).map({ generate-random-sentence($rule-body, %focusRules, :$max-iterations, :$max-random-list-elements, sep => $sep2, :$sym)});
 
+    if $sep eq 'NONE' {
+        @randSentences = @randSentences>>.raku
+    }
     say @randSentences.join("\n");
 }
