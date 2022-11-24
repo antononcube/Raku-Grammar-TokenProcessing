@@ -103,3 +103,99 @@ replace-token-names --help
 #     --file-ext=<Str>        Extension(s) pattern of the files to be processed. [default: '.rakumod']
 #     --file-new-ext=<Str>    Extension to be added to newly obtained files. If NONE the file content is overwritten. [default: '.new']
 ```
+
+### Random sentence generation
+
+```shell
+generate-random-sentences --help
+```
+```
+# Usage:
+#   generate-random-sentences <grammar> <rule-body> [<n>] [--max-iterations[=UInt]] [--max-random-list-elements[=UInt]] [--sep=<Str>] [--syms=<Str>] -- Generates random sentences for a given grammar.
+#   
+#     <grammar>                            Grammar name.
+#     <rule-body>                          Rule body (to start generation with.)
+#     [<n>]                                Number of sentences. [default: 10]
+#     --max-iterations[=UInt]              Max number of recursive rule replacement iterations. [default: 40]
+#     --max-random-list-elements[=UInt]    Max number of elements to use generate random lists. [default: 6]
+#     --sep=<Str>                          Separator of the join literals; if 'NONE' Raku code lists are returned. [default: ' ']
+#     --syms=<Str>                         A string that is a sym or a space separated syms to concretize proto rules with. [default: 'English']
+```
+
+Here is example of random sentence generation based on the grammar of the package 
+["DSL::English::QuantileRegressionWorkflows"](https://raku.land/zef:antononcube/DSL::English::QuantileRegressionWorkflows), [AAp5]:
+
+```shell
+generate-random-sentences DSL::English::QuantileRegressionWorkflows::Grammar '<workflow-command>' 10
+```
+```
+# compute and echo the time series bottom outliers with the seq(  NUMBER(85)  NUMBER(88)  NUMBER(294) and  NUMBER(54) ,  NUMBER(159) )
+# utilize the qr object VAR_NAME("UHKs3")
+# simple object creation from DATASET_NAME("lyqKv")
+# echo diagram plot error
+# compute a quantile regression
+# compute an QuantileRegression using INTEGER(248) knots , Range[  NUMBER(236) and  NUMBER(66) ,  NUMBER(191) and  NUMBER(63) ,  NUMBER(22) ] probabilities and using the probability seq(  NUMBER(209)  NUMBER(193)  NUMBER(187) ) and using INTEGER(65) interpolation order , using the probabilities Range[  NUMBER(114)  NUMBER(58) ]
+# load dataset DATASET_NAME("16Z1m")
+# echo data summaries
+# delete missing values
+# display graph
+```
+
+Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
+
+```shell
+generate-random-sentences DSL::Bulgarian::QuantileRegressionWorkflows::Grammar '<workflow-command>' 10 --syms='Bulgarian English'
+```
+```
+# направи DATASET_NAME("VA0HD")
+# изчисли QuantileRegression
+# създай обект прост начин от DATASET_NAME("byTEY")
+# зареди данни таблица DATASET_NAME("rU3lO")
+# направи чрез DATASET_NAME("7Pxh1")
+# изчисли  QuantileRegression пасване за  вероятност  NUMBER(243)  NUMBER(10) and чрез интерполация степен INTEGER(187)
+# ползвай дейта сет VAR_NAME("RNnw5")
+# рекапитулирай данни
+# ползвай  масив от данни VAR_NAME("Eqr64")
+# рекапитулирай данни
+```
+
+--------
+
+## References
+
+### Packages
+
+[AAp1] Anton Antonov,
+[DSL::Shared, Raku package](https://github.com/antononcube/Raku-DSL-Shared),
+(2018-2022),
+[GitHub/antononcube](https://github.com/antononcube).
+
+[AAp2] Anton Antonov,
+[DSL::English::ClassificationWorkflows, Raku package](https://github.com/antononcube/Raku-DSL-General-ClassificationWorkflows),
+(2018-2022),
+[GitHub/antononcube](https://github.com/antononcube).
+
+[AAp3] Anton Antonov,
+[DSL::English::DataQueryWorkflows, Raku package](https://github.com/antononcube/Raku-DSL-English-DataQueryWorkflows),
+(2020-2022),
+[GitHub/antononcube](https://github.com/antononcube).
+
+[AAp4] Anton Antonov,
+[DSL::English::LatentSemanticAnalysisWorkflows, Raku package](https://github.com/antononcube/Raku-DSL-General-LatentSemanticAnalysisWorkflows),
+(2018-2022),
+[GitHub/antononcube](https://github.com/antononcube).
+
+[AAp5] Anton Antonov,
+[DSL::English::QuantileRegressionWorkflows, Raku package](https://github.com/antononcube/Raku-DSL-General-QuantileRegressionWorkflows),
+(2018-2022),
+[GitHub/antononcube](https://github.com/antononcube).
+
+[AAp6] Anton Antonov,
+[DSL::English::RecommenderWorkflows, Raku package](https://github.com/antononcube/Raku-DSL-General-RecommenderWorkflows),
+(2018-2022),
+[GitHub/antononcube](https://github.com/antononcube).
+
+[AAp7] Anton Antonov,
+[DSL::Bulgarian, Raku package](https://github.com/antononcube/Raku-DSL-Bulgarian),
+(2022),
+[GitHub/antononcube](https://github.com/antononcube).
