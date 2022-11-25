@@ -355,6 +355,8 @@ multi sub take-rule-body(Str $definition is copy) {
     $definition = $definition.subst(/ '|' \h* '([\w]+) <?{' .* '}>' /, '').subst(':i', '');
     #note $definition.raku;
     if $definition ~~ / ^ (<-[{]>*) '{' \h* (.*) \h* '}' (.*) $ / { $definition = ~$1  };
+    $definition = $definition.subst( / [ '\{' | '{' ] <-[{}]>* '}' | '<' . '{' <-[{}]>* '}>' /, ''):g;
+    $definition = $definition.subst( / [ ':my' | ':our' ] \s+ <-[;]>+ ';' /, ''):g;
     $definition = $definition.subst("\n", ''):g;
     #note 'take-rule-body : '.uc, $definition.raku;
     return $definition.trim;
