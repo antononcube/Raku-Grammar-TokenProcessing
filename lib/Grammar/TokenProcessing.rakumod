@@ -278,7 +278,12 @@ sub random-part(Str $ruleBody is copy, $actObj) {
 ##------------------------------------------------------------
 my %randomTokenGenerators =
         '<ws>' => -> { ' ' },
-        '<wl-expr>' => -> { 'WLEXPR("1+1")' },
+        '<.ws>' => -> { ' ' },
+        '<.ws>?' => -> { [' ', ''].pick },
+        '<wl-expr>' => -> { 'WL_EXPR("Sqrt[3]")' },
+        '<code-expr>' => -> { 'CODE_EXPR("1+1")' },
+        '<shell-expr>' => -> { 'SHELL_EXPR("ls")' },
+        '<regex-pattern>' => -> { 'REGEX("\w+")' },
         '<integer-value>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
         '<integer>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
         '<number-value>' => -> { to-single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
