@@ -1,0 +1,72 @@
+use v6.d;
+use Test;
+
+use lib '.';
+use lib './lib';
+
+use Chemistry::Stoichiometry::Grammar;
+use DSL::English::DataQueryWorkflows::Grammar;
+
+use Grammar::TokenProcessing;
+
+plan 4;
+
+##-----------------------------------------------------------
+## 1
+##-----------------------------------------------------------
+my $rule1 = q:to/END/;
+ rule random-tabular-data-generation-command { <generate-directive> }
+END
+
+ok Grammar::TokenProcessing::ComprehensiveGrammar.parse($rule1, rule => 'token-rule-definition' );
+
+
+##-----------------------------------------------------------
+## 2
+##-----------------------------------------------------------
+my $rule2 = q:to/END/;
+rule random-tabular-data-generation-command { <.generate-directive>? <.a-determiner>? <.random-adjective> <.tabular-adjective>? <.dataset-phrase> <.filler-separator> <random-tabular-dataset-arguments-list>? }
+END
+
+ok Grammar::TokenProcessing::ComprehensiveGrammar.parse($rule2, rule => 'token-rule-definition' );
+
+
+##-----------------------------------------------------------
+## 3
+##-----------------------------------------------------------
+my $rule3 = q:to/END/;
+  token top { 'top' }
+  token ar { 'ar' }
+  token recommend { 'recommend' | 'suggest' }
+  token recommender { 'recommender' | 'suggester' }
+  token suggest { 'suggest' | 'recommend' | 'propose' }
+  token object { 'object' }
+  token nearest-neighbors { 'nearest' 'neighbours' }
+  token recommender-object { 'recommender' 'object' }
+  token recommender-object-2 { <recommender> <object> }
+  token recommend-nns { <recommend> <nearest-neighbors> }
+  rule recommend-nns-2 { <recommend> <nearest-neighbors> }
+END
+
+ok Grammar::TokenProcessing::ComprehensiveGrammar.parse($rule3, rule => 'token-rule-definition-list' );
+
+
+##-----------------------------------------------------------
+## 4
+##-----------------------------------------------------------
+my $rule4 = q:to/EOI/;
+  token history:sym<English> { 'history'  }
+  token accuracies-noun:sym<English> { 'accuracies' }
+  token recommend { 'recommend' | 'suggest'  }
+  token recommender { 'recommender' | 'suggester' }
+  token suggest { 'suggest' | 'recommend' | 'propose' }
+  token with-preposition { 'with' | 'using' | 'by' }
+  token nearest-neighbors { 'nearest' 'neighbours' }
+  token items-slot:sym<items> { 'items' }
+  rule recommend-nns { <recommend> <nearest-neighbors> }
+EOI
+
+ok Grammar::TokenProcessing::ComprehensiveGrammar.parse($rule4, rule => 'token-rule-definition-list' );
+
+
+done-testing;
