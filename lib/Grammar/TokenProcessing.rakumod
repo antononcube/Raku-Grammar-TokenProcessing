@@ -278,6 +278,7 @@ sub random-part(Str $ruleBody is copy, $actObj) {
 ##------------------------------------------------------------
 my %randomTokenGenerators =
         '<ws>' => -> { ' ' },
+        '<wl-expr>' => -> { 'WLEXPR("1+1")' },
         '<integer-value>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
         '<integer>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
         '<number-value>' => -> { to-single-qouted ' NUMBER(' ~ random-real(300).round.Str ~ ')' },
