@@ -24,11 +24,19 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token sym-spec { 'sym<' <var-name> '>' }
 
-  token token-name-spec { [\w | '-' | ':' | '.' | '<' | '>' ]+ }
+  token sigil-char { '%' | '*'  | '$' | '\\' | '@' }
+
+  token token-name-spec { [\w | '.' | '<'  ] [\w | '-' | ':' | '.' | '<' | '>' ]* }
 
   token white-space-regex { '\\h' [ '*' | '+' ] }
 
   token token-renamed-spec { '<' \h* <.var-name> \h* '=' \h* \.? <var-name> \h* '>' }
+
+  # This more comprehensive regex works, but it is not needed (for now.)
+  #regex token-variable { [ ':my' | ':our' ] \s+ <var-name> \s+ \S+ \s* ['=' \s* \S+ \s* ]? ';' }
+  regex token-variable { [ ':my' | ':our' ] \s+ <-[;]>+ ';' }
+
+  regex token-variables-list { \s* <token-variable>+ % \s* }
 
   token token { 'token' | 'rule' | 'regex' }
 
