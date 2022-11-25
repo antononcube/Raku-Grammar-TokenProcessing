@@ -13,7 +13,10 @@
     "Text::Levenshtein::Damerau:ver<0.3.0+>"
   ],
   "build-depends": [],
-  "test-depends": [],
+  "test-depends": [
+    "Chemistry::Stoichiometry::Grammar:ver<0.1.4+>",
+    "DSL::English::DataQueryWorkflows::Grammar:ver<0.5.9+>"
+  ],
   "provides": {
     "Grammar::TokenProcessing": "lib/Grammar/TokenProcessing.rakumod",
     "Grammar::TokenProcessing::Actions::EnhancedTokens": "lib/Grammar/TokenProcessing/Actions/EnhancedTokens.rakumod",
