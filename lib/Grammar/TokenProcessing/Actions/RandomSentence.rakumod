@@ -33,7 +33,7 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
     method alphad($/) { make $/.Str; }
 
-    method token-renamed-spec($/) { make '<' ~ $<alphad>.made.join() ~ '>'; }
+    method token-renamed-spec($/) { make '<' ~ $<alphad>>>.made.join() ~ '>'; }
 
     method token-spec-element($/) { make $/.values[0].made; }
 
