@@ -10,6 +10,8 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   regex TOP { [ <token-rule-definition> | <empty-line> | <comment-line> | <code-line> ]+ }
 
+  regex token-rule-definition-list { <token-rule-definition>+ }
+
   token empty-line { \h* \n }
 
   token code-line { \h* \N* \n | \h* '}' \h* $$ }
