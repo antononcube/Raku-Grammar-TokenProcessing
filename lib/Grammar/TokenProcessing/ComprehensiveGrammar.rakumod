@@ -31,7 +31,9 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
     <token> \s* <token-name-spec> \s*
     '{'
     [ \s* <token-variables-list> ]?
+    [ \s* <token-code-block> ]?
     \s* <token-comprehensive-body> \s*
+    [ <token-code-block> \s*]?
     <token-definition-end>
   }
 

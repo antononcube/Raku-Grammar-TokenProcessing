@@ -38,6 +38,8 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   regex token-variables-list { \s* <token-variable>+ % \s* }
 
+  regex token-code-block { '{' <-[{}]>* '}' | '<' . '{' <-[{}]>* '}>' }
+
   token token { 'token' | 'rule' | 'regex' }
 
   token token-spec { '\'' <-[']>*  '\'' }
