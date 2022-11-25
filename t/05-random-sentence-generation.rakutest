@@ -1,0 +1,38 @@
+use v6.d;
+use Test;
+
+use Chemistry::Stoichiometry::Grammar;
+use DSL::English::DataQueryWorkflows::Grammar;
+
+use Grammar::TokenProcessing;
+
+plan 3;
+
+##-----------------------------------------------------------
+## 1÷3
+##-----------------------------------------------------------
+my $focusGrammar1 = DSL::English::DataQueryWorkflows::Grammar;
+my %focusRules1 = $focusGrammar1.^method_table;
+my $ruleBody1 = '<workflow-command>';
+
+my @randSentences1 = (^10).map({ generate-random-sentence(
+        $ruleBody1,
+        %focusRules1,
+        max-iterations => 40,
+        random-token-generators => Whatever,
+        sep => ' ') }).sort.unique(as => { $_.join(' ') });
+
+is @randSentences1.isa(Array),
+        True,
+        'DSL::English::DataQueryWorkflows::Grammar test: is Array';
+
+is  @randSentences1.all ~~ Str,
+        True,
+        'DSL::English::DataQueryWorkflows::Grammar test: all Str';
+
+is @randSentences1.elems ≥ 8,
+        True,
+        'DSL::English::DataQueryWorkflows::Grammar test: sufficient number of elements';
+
+done-testing;
+
