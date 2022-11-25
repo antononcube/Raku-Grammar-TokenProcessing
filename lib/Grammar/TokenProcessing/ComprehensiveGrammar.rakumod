@@ -13,7 +13,7 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
   # Comprehensive body definitions
   #--------------------------------------------------------------------
   regex token-spec-element { <token-spec> | <token-name-spec> | <token-renamed-spec> | <white-space-regex> }
-  regex repeat-spec-delim { .* }
+  regex repeat-spec-delim { <-[{}]>* }
   token quantifier { '+' | '*' }
   regex repeat-spec-for-lists { <quantifier> \h* '%' \h* <repeat-spec-delim> }
   regex repeat-spec { <repeat-spec-for-lists> || '?' | '*' | '+' }
@@ -29,8 +29,10 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
   regex token-rule-definition {
     <leading-space>
     <token> \s* <token-name-spec> \s*
-    [ '{' || <error( "cannot find \{" )> ]
+    '{'
+    [ \s* <token-variables-list> ]?
     \s* <token-comprehensive-body> \s*
-    [ <token-definition-end> || <error( "cannot find <token-definition-end>" )> ] }
+    <token-definition-end>
+  }
 
 }
