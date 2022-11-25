@@ -31,9 +31,11 @@ class Grammar::TokenProcessing::Actions::RandomSentence
         };
     }
 
-    method alphad($/) { make $/.Str; }
+    method alnumd($/) { make $/.Str; }
 
-    method token-renamed-spec($/) { make '<' ~ $<alphad>>>.made.join() ~ '>'; }
+    method var-name($/) { make $/.Str; }
+
+    method token-renamed-spec($/) { make '<' ~ $<var-name>.made ~ '>'; }
 
     method token-spec-element($/) { make $/.values[0].made; }
 

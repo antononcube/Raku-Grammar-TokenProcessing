@@ -18,13 +18,17 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token comment-line { '#' \N* \n }
 
+  token alnumd { <alpha> | '-' }
+
+  token var-name { <.alpha> <.alnumd>* }
+
+  token sym-spec { 'sym<' <var-name> '>' }
+
   token token-name-spec { [\w | '-' | ':' | '.' | '<' | '>' ]+ }
 
   token white-space-regex { '\\h' [ '*' | '+' ] }
 
-  token alphad { <alpha> | '-' }
-
-  token token-renamed-spec { '<' \h* <.alphad>+ \h* '=' \h* \.? <alphad>+ \h* '>' }
+  token token-renamed-spec { '<' \h* <.var-name> \h* '=' \h* \.? <var-name> \h* '>' }
 
   token token { 'token' | 'rule' | 'regex' }
 
