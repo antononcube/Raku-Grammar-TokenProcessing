@@ -52,10 +52,6 @@ ok Grammar::TokenProcessing::Grammar.parse($rule3, rule => 'token-rule-definitio
 ## 4
 ##-----------------------------------------------------------
 my $rule4 = q:to/EOI/;
-# Simple grammar role.
-
-role Simple::Role {
-
   token history:sym<English> { 'history'  }
   token accuracies-noun:sym<English> { 'accuracies' }
   token recommend { 'recommend' | 'suggest'  }
@@ -65,11 +61,9 @@ role Simple::Role {
   token nearest-neighbors { 'nearest' 'neighbours' }
   token items-slot:sym<items> { 'items' }
   rule recommend-nns { <recommend> <nearest-neighbors> }
-
-}
 EOI
 
-ok Grammar::TokenProcessing::Grammar.parse($rule4, rule => 'TOP' );
+ok Grammar::TokenProcessing::Grammar.parse($rule4, rule => 'token-rule-definition-list' );
 
 
 done-testing;
