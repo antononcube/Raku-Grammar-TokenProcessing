@@ -12,7 +12,7 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 #| Generates random sentences for a given grammar.
 multi MAIN(
         Str $grammar,                        #= Grammar name.
-        Str $rule-body,                      #= Rule body (to start generation with.)
+        Str $rule-body = 'TOP',                      #= Rule body (to start generation with.)
         UInt $n = 10,                        #= Number of sentences.
         UInt :$max-iterations = 40,          #= Max number of recursive rule replacement iterations.
         UInt :$max-random-list-elements = 6, #= Max number of elements to use generate random lists.
@@ -20,14 +20,23 @@ multi MAIN(
         Str :$syms  = 'English'                #= A string that is a sym or a space separated syms to concretize proto rules with.
            ) {
 
-    try require ::($grammar);
-    if ::($grammar) ~~ Failure {
-        die "Cannot find grammar named: $grammar.";
+    my $focusGrammar;
+    if $grammar ~~ / ^ grammar .* / {
+        use MONKEY-SEE-NO-EVAL;
+
+        $focusGrammar = EVAL($grammar);
+
+    } else {
+
+        try require ::($grammar);
+        if ::($grammar) ~~ Failure {
+            die "Cannot find grammar named: $grammar.";
+        }
+
+        $focusGrammar = ::($grammar);
     }
 
-    my $focusGrammar = ::($grammar);
-
-    die "The first argument is expected to be of type Grammar."
+    die "The first argument is expected to be of type Grammar or a string that is a valid grammer definition."
     unless $focusGrammar ~~ Grammar;
 
     my %focusRules = $focusGrammar.^method_table;
