@@ -11,9 +11,9 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Generates random sentences for a given grammar.
 multi MAIN(
-        Str $grammar,                        #= Grammar name.
-        Str $rule-body = 'TOP',                      #= Rule body (to start generation with.)
-        UInt $n = 10,                        #= Number of sentences.
+        Str $grammar,                        #= Grammar name or definition.
+        Str :$rule-body = 'TOP',             #= Rule body (to start generation with.)
+        UInt :$n = 10,                       #= Number of sentences.
         UInt :$max-iterations = 40,          #= Max number of recursive rule replacement iterations.
         UInt :$max-random-list-elements = 6, #= Max number of elements to use generate random lists.
         Str :$sep = ' ',                     #= Separator of the join literals; if 'NONE' Raku code lists are returned.
@@ -21,7 +21,7 @@ multi MAIN(
            ) {
 
     my $focusGrammar;
-    if $grammar ~~ / ^ grammar .* / {
+    if $grammar ~~ / ^ \s* grammar \s+ .* / {
         use MONKEY-SEE-NO-EVAL;
 
         $focusGrammar = EVAL($grammar);
