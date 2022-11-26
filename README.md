@@ -129,16 +129,16 @@ Here is example of random sentence generation based on the grammar of the packag
 random-sentence-generation DSL::English::QuantileRegressionWorkflows::Grammar
 ```
 ```
-# compute outliers
-# compute the bottom outliers
-# ingest the time series data DATASET_NAME("Y55R8")
-# create from DATASET_NAME("sPPXk")
-# compute anomalies by residuals by the threshold  NUMBER(263)
-# echo of absolute error
-# compute anomalies using residuals by threshold  NUMBER(201)
+# display plot
 # summarize data
-# display summary
-# echo chart of the error
+# display data summary
+# echo current pipeline value using the function
+# utilize DATASET_NAME("pUovv")
+# echo plot using dates
+# rescale value axis
+# do a quantile regression
+# compute an QuantileRegression
+# utilize the QR object VAR_NAME("BWZ7u")
 ```
 
 Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
@@ -147,16 +147,16 @@ Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
 random-sentence-generation DSL::Bulgarian::QuantileRegressionWorkflows::Grammar  -n=10 --syms='Bulgarian English'
 ```
 ```
-# изчисли и покажи  QuantileRegression
-# покажи рекапитулации
-# рекапитулирай данни
-# изчисли и ехо времеви серия връх  данни таблица извънредности чрез  Range [  NUMBER(212) ] вероятност
-# изчисли  извънредна стойности чрез  от  NUMBER(273) към  NUMBER(9) чрез стъпка  NUMBER(89) вероятности
-# изчисли дейтасет връх времеви серия извънредности
-# изчисли и ехо даннов масив извънредности
-# ехо чертеж за  абсолютен грешка
-# прочети данни DATASET_NAME("waLYd")
-# чертеж чертеж на относителен грешка чертежи
+# изтрий липсващи
+# покажи граф чрез дати чрез дата нула
+# покажи граф
+# покажи на  грешка
+# направи със DATASET_NAME("z91ts")
+# прост обект създание DATASET_NAME("cBipD")
+# премащабирай  оси
+# изчисли аномалии чрез  извънредна стойност IDENTIFIER VAR_NAME("yxwOh")
+# прави QuantileRegression пасване на INTEGER(172) интерполация порядък and чрез възли  NUMBER(60) ,  NUMBER(283)  NUMBER(286)  NUMBER(3)  NUMBER(88)
+# изчисли  връх извънредности
 ```
 
 Here we generate sentences with a grammar string (that is a valid Raku definition of a grammar):
@@ -165,16 +165,16 @@ Here we generate sentences with a grammar string (that is a valid Raku definitio
 random-sentence-generation -n=5 "
 grammar Parser {
     rule  TOP  { I <love> <lang> }
-    token love { '♥' | love }
+    token love { '♥' ** 1..3 | love }
     token lang { < Raku Perl Rust Go Python Ruby > }
 }"
 ```
 ```
-# I ♥ Rust
-# I ♥ Ruby
-# I ♥ Go
-# I love Go
 # I ♥ Raku
+# I ♥ Raku
+# I love Go
+# I ♥ ♥ Rust
+# I love Rust
 ```
 
 

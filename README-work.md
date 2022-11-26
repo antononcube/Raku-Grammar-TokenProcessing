@@ -88,7 +88,7 @@ Here we generate sentences with a grammar string (that is a valid Raku definitio
 random-sentence-generation -n=5 "
 grammar Parser {
     rule  TOP  { I <love> <lang> }
-    token love { '♥' | love }
+    token love { '♥' ** 1..3 | love }
     token lang { < Raku Perl Rust Go Python Ruby > }
 }"
 ```
