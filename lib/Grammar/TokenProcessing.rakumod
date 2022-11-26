@@ -318,7 +318,7 @@ multi sub take-rule-body(Str $ruleKey is copy,
                          %tokenGenerators,
                          @syms = ['English', ]) {
 
-    if not so $ruleKey.trim ~~ / ^ '<' .*  '>' $ / {
+    if (! so $ruleKey.trim ~~ / ^ '<' .*  '>' $ /) && $ruleKey.trim ne 'TOP' {
         return $ruleKey;
     }
 
@@ -328,7 +328,11 @@ multi sub take-rule-body(Str $ruleKey is copy,
         }
     }
 
-    $ruleKey = $ruleKey.Str.trim.substr(1, *- 1).subst(/ ^ \. /, '');
+    if $ruleKey.trim eq 'TOP' {
+        $ruleKey = $ruleKey.trim;
+    } else {
+        $ruleKey = $ruleKey.Str.trim.substr(1, *- 1).subst(/ ^ \. /, '');
+    }
 
     if %rules{$ruleKey}:exists {
 
@@ -377,6 +381,7 @@ sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators, $syms 
 
 ##------------------------------------------------------------
 #| Generate random sentence.
+#| C<$grammar> : A grammar. (Using 'TOP' as C<$ruleBody>.)
 #| C<$ruleBody> : The body of the rule to start generating with.
 #| C<%rules> : Rule-to-definition pairs.
 #| C<$max-iterations> : Max iterations to recursively replace rule definitions.
@@ -384,7 +389,11 @@ sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators, $syms 
 #| C<$random-token-generators> : Rule-to-function pairs used to generate leaf literals.
 #| C<$sep> : Separator of the join literals; if not a string no joining is done.
 #| C<$sym> : Sym string to concretize proto rules with.
-proto sub generate-random-sentence(Str $ruleBody, %rules, |) is export {*}
+proto sub generate-random-sentence(|) is export {*}
+
+multi sub generate-random-sentence(Grammar $grammar, *%args) {
+    return generate-random-sentence('TOP', $grammar.^method_table, |%args);
+}
 
 multi sub generate-random-sentence(Str $ruleBody,
                                    %rules,
