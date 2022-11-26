@@ -280,6 +280,8 @@ my %randomTokenGenerators =
         '<ws>' => -> { ' ' },
         '<.ws>' => -> { ' ' },
         '<.ws>?' => -> { [' ', ''].pick },
+        '<alnum>' => -> { 'ALNUM(' ~ random-string(chars => 1, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ ')'},
+        '<.alnum>' => -> { 'ALNUM(' ~ random-string(chars => 1, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ ')'},
         '<wl-expr>' => -> { 'WL_EXPR("Sqrt[3]")' },
         '<code-expr>' => -> { 'CODE_EXPR("1+1")' },
         '<shell-expr>' => -> { 'SHELL_EXPR("ls")' },
@@ -344,6 +346,8 @@ multi sub take-rule-body(Str $ruleKey is copy,
             warn "Cannot get a rule body for $ruleKey.";
         }
         return take-rule-body($ruleVal);
+    } else {
+        warn "Cannot find a rule body for $ruleKey.";
     }
     return $ruleKey;
 }
