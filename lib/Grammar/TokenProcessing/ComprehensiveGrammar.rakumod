@@ -15,15 +15,16 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
   regex token-spec-element { <token-spec> | <token-name-spec> | <token-renamed-spec> | <white-space-regex> }
   regex repeat-spec-delim { <-[{}]>* }
   token quantifier { '+' | '*' }
+  token repeat-range { $<count>=(\d+) | $<from>=(\d+) [ '..' | '...' ] $<to>=(\d+ | '*') }
   regex repeat-spec-for-lists { <quantifier> \h* '%' \h* <repeat-spec-delim> }
-  regex repeat-spec { <repeat-spec-for-lists> || '?' | '*' | '+' }
+  regex repeat-spec { <repeat-spec-for-lists> || '**' \h* <repeat-range> || '?' | '*' | '+' }
   regex repetition { <element> \h* <repeat-spec>? }
   regex concatenation { \s* [ <repetition>+ % \s+ ] \s* }
   regex alternation { \s* [ <concatenation>+ % <.delim> ] | <token-quoted-list-body> \s* }
   regex group { '[' \s* <alternation> \s* ']' }
   regex element { <token-spec-element> || <group> }
 
-  regex token-comprehensive-body { <alternation>+ % \h+ }
+  regex token-comprehensive-body { \s* <alternation>+ % \s+ }
   #--------------------------------------------------------------------
 
   regex token-rule-definition {
@@ -36,5 +37,13 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
     [ <token-code-block> \s*]?
     <token-definition-end>
   }
+
+#  regex token-rule-definition {
+#    <leading-space>
+#    <token> \s* <token-name-spec> \s*
+#    '{'
+#    \s* <token-comprehensive-body> \s*
+#    <token-definition-end>
+#  }
 
 }
