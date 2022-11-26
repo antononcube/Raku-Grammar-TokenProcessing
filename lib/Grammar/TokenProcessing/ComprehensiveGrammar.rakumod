@@ -19,7 +19,7 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
   regex repeat-spec { <repeat-spec-for-lists> || '?' | '*' | '+' }
   regex repetition { <element> \h* <repeat-spec>? }
   regex concatenation { \s* [ <repetition>+ % \s+ ] \s* }
-  regex alternation { \s* [ <concatenation>+ % <.delim> ] \s* }
+  regex alternation { \s* [ <concatenation>+ % <.delim> ] | <token-quoted-list-body> \s* }
   regex group { '[' \s* <alternation> \s* ']' }
   regex element { <token-spec-element> || <group> }
 
