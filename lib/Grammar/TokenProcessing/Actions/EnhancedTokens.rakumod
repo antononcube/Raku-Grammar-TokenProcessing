@@ -107,6 +107,11 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
         }
     }
 
+    method token-quoted-list-body($/) {
+        warn 'No token enhancement is done for quoted list bodies.';
+        make $/.Str;
+    }
+
     method token-simple-body($/) {
         make ($/.values>>.made).join(' | ');
     }

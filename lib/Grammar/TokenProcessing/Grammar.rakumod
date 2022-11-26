@@ -48,13 +48,15 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token delim { \s* '|' | '||' \s* }
 
+  regex token-quoted-list-body { \s* '<' \s+ [ [\S+]+ % \s* ] \s+ '>' \s* }
+
   regex token-simple-body { \s* [ <token-spec-list>+ % <.delim> ] \s* }
 
   regex token-phrase-body { \s* [ <token-name-spec>+ % <.delim> ] \s* }
 
   regex token-complex-body { [ <token-spec> | <token-name-spec> | '.' | '|' | '||' | ']' | '[' | '?' | '+' | '*' | \s | '\\' ]* }
 
-  regex token-body { <token-simple-body> | <token-phrase-body> | <token-complex-body> }
+  regex token-body { <token-quoted-list-body> | <token-simple-body> | <token-phrase-body> | <token-complex-body> }
 
   token token-definition-end { '}' \h* ';'? \h* \n }
 

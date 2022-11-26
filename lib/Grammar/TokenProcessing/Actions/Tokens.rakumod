@@ -38,6 +38,10 @@ class Grammar::TokenProcessing::Actions::Tokens {
         make '';
     }
 
+    method token-quoted-list-body($/) {
+        make $/.Str.words[1,*-1];
+    }
+
     method token-simple-body($/) {
         make $/.values>>.made;
     }

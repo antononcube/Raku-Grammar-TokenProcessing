@@ -37,6 +37,10 @@ class Grammar::TokenProcessing::Actions::TokensHash {
         make $/.Str;
     }
 
+    method token-quoted-list-body($/) {
+        make $/.Str.words[1,*-1];
+    }
+
     method token-simple-body($/) {
         make $/.values>>.made;
     }
