@@ -39,7 +39,7 @@ class Grammar::TokenProcessing::Actions::Tokens {
     }
 
     method token-quoted-list-body($/) {
-        make $/.Str.words[1,*-1];
+        make $/.Str.words[1..*-2];
     }
 
     method token-simple-body($/) {
