@@ -66,6 +66,16 @@ class Grammar::TokenProcessing::Actions::RandomSentence
                 $sep = $sep.trim eq 'ws' ?? ' ' !! $sep;
                 ((@res Z ($sep xx @res.elems)).flat)[^(*-1)]
             }
+            when so $<repeat-spec><repeat-range> {
+                my $from = $<repeat-spec><repeat-range><from> // 0;
+                my $to = $<repeat-spec><repeat-range><to> // 0;
+                if so $<repeat-spec><repeat-range><count> {
+                    $from = $<repeat-spec><repeat-range><count>.Str.Int;
+                    $to = $<repeat-spec><repeat-range><count>.Str.Int;
+                }
+                my @res = (1...($from..$to).pick).map({ $<element>.made });
+                @res
+            }
             when $_ eq '?' { rand > 0.5 ?? $<element>.made !! '' }
             when $_ eq '+' { (1...(1..$!max-random-list-elements).pick).map({ $<element>.made }).unique.Array }
             when $_ eq '*' { (0...(1..$!max-random-list-elements).pick).map({ $<element>.made }).unique.Array }
