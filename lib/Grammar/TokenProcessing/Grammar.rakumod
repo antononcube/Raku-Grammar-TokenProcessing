@@ -8,7 +8,7 @@ unit module Grammar::TokenProcessing::Grammar;
 
 grammar Grammar::TokenProcessing::Grammar  {
 
-  regex TOP { [ <token-rule-definition> | <empty-line> | <comment-line> | <code-line> ]+ }
+  regex TOP { [ <token-rule-definition> || <empty-line> || <comment-line> || <code-line> ]+ }
 
   regex token-rule-definition-list { <token-rule-definition>+ }
 
@@ -18,7 +18,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token comment-line { '#' \N* \n }
 
-  token alnumd { <alpha> | '-' }
+  token alnumd { <alpha> | <:Pd> }
 
   token var-name { <.alpha> <.alnumd>* }
 
