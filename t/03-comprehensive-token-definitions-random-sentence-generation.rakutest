@@ -9,7 +9,7 @@ use DSL::English::DataQueryWorkflows::Grammar;
 
 use Grammar::TokenProcessing;
 
-plan 2;
+plan 3;
 
 ##-----------------------------------------------------------
 ## 1
@@ -26,10 +26,23 @@ my @allSentences1 = (( 'I' X <♥ love>.Array) X <Raku Perl Rust Go Python Ruby>
 
 ok random-sentence-generation('TOP', %rules1) ∈ @allSentences1;
 
+
 ##-----------------------------------------------------------
 ## 2
 ##-----------------------------------------------------------
-ok random-sentence-generation($grammar1) ∈ @allSentences1;
+is random-sentence-generation($grammar1) ∈ @allSentences1, True;
+
+
+##-----------------------------------------------------------
+## 3
+##-----------------------------------------------------------
+grammar ISBN {
+    token TOP {  <tenner>  |  <niner-xray>  }
+    token tenner     { [ <digit> <:Pd> ? ] ** 10   }
+    token niner-xray { [ <digit> <:Pd> ? ] **  9 X }
+}
+
+ok random-sentence-generation(ISBN);
 
 
 done-testing;
