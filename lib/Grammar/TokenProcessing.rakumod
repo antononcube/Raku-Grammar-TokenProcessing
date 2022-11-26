@@ -389,32 +389,32 @@ sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators, $syms 
 #| C<$random-token-generators> : Rule-to-function pairs used to generate leaf literals.
 #| C<$sep> : Separator of the join literals; if not a string no joining is done.
 #| C<$sym> : Sym string to concretize proto rules with.
-proto sub generate-random-sentence(|) is export {*}
+proto sub random-sentence-generation(|) is export {*}
 
-multi sub generate-random-sentence(Grammar $grammar, *%args) {
-    return generate-random-sentence('TOP', $grammar.^method_table, |%args);
+multi sub random-sentence-generation(Grammar $grammar, *%args) {
+    return random-sentence-generation('TOP', $grammar.^method_table, |%args);
 }
 
-multi sub generate-random-sentence(Str $ruleBody,
-                                   %rules,
-                                   UInt :$max-iterations = 40,
-                                   UInt :$max-random-list-elements = 6,
-                                   :$random-token-generators = Whatever,
-                                   :$sep = ' ',
-                                   :$syms = 'English') is export {
+multi sub random-sentence-generation(Str $ruleBody,
+                                     %rules,
+                                     UInt :$max-iterations = 40,
+                                     UInt :$max-random-list-elements = 6,
+                                     :$random-token-generators = Whatever,
+                                     :$sep = ' ',
+                                     :$syms = 'English') is export {
 
     my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(:$max-random-list-elements);
 
-    return generate-random-sentence($ruleBody, %rules, $actObj, :$max-iterations, :$random-token-generators, :$sep, :$syms);
+    return random-sentence-generation($ruleBody, %rules, $actObj, :$max-iterations, :$random-token-generators, :$sep, :$syms);
 }
 
-multi sub generate-random-sentence(Str $ruleBody,
-                                   %rules,
-                                   $actObj,
-                                   UInt :$max-iterations = 40,
-                                   :$random-token-generators is copy = Whatever,
-                                   :$sep = ' ',
-                                   :$syms is copy = 'English'
+multi sub random-sentence-generation(Str $ruleBody,
+                                     %rules,
+                                     $actObj,
+                                     UInt :$max-iterations = 40,
+                                     :$random-token-generators is copy = Whatever,
+                                     :$sep = ' ',
+                                     :$syms is copy = 'English'
                                    ) is export {
 
     # Process $random-token-generators
@@ -433,13 +433,13 @@ multi sub generate-random-sentence(Str $ruleBody,
     @res = reallyflat(@res);
     my UInt $k = 0;
     while so @res.join(' ') ~~ / '<' <-[<>]>+ '>' | .+ '|' .+ / && $k++ < $max-iterations {
-        #note 'generate-random-sentence : '.uc, $k, ' : ', @res.raku;
+        #note 'random-sentence-generation : '.uc, $k, ' : ', @res.raku;
         @res = @res.map({ random-part($_, $actObj) });
         @res = reallyflat(@res).map({ $_ ~~ Str ?? replace-definitions($_, %rules, $actObj, $random-token-generators, $syms) !! '' });
         @res = reallyflat(@res);
     }
 
-    #note 'generate-random-sentence : '.uc, 'END : ', @res.raku;
+    #note 'random-sentence-generation : '.uc, 'END : ', @res.raku;
     # Post-process
     @res = @res.grep({ $_.trim.chars > 0 })>>.&to-unqouted;
 

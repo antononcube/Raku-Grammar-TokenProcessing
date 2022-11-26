@@ -24,12 +24,12 @@ my %rules1 = $grammar1.^method_table;
 
 my @allSentences1 = (( 'I' X <♥ love>.Array) X <Raku Perl Rust Go Python Ruby>.Array).map(*.flat.join(' '));
 
-ok generate-random-sentence('TOP', %rules1) ∈ @allSentences1;
+ok random-sentence-generation('TOP', %rules1) ∈ @allSentences1;
 
 ##-----------------------------------------------------------
 ## 2
 ##-----------------------------------------------------------
-ok generate-random-sentence($grammar1) ∈ @allSentences1;
+ok random-sentence-generation($grammar1) ∈ @allSentences1;
 
 
 done-testing;

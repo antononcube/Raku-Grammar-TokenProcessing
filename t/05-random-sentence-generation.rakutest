@@ -18,7 +18,7 @@ my $focusGrammar1 = DSL::English::DataQueryWorkflows::Grammar;
 my %focusRules1 = $focusGrammar1.^method_table;
 my $ruleBody1 = '<workflow-command>';
 
-my @randSentences1 = (^10).map({ generate-random-sentence(
+my @randSentences1 = (^10).map({ random-sentence-generation(
         $ruleBody1,
         %focusRules1,
         max-iterations => 40,
