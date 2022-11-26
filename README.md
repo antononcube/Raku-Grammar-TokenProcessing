@@ -107,15 +107,15 @@ replace-token-names --help
 ### Random sentence generation
 
 ```shell
-generate-random-sentences --help
+random-sentence-generation --help
 ```
 ```
 # Usage:
-#   generate-random-sentences <grammar> <rule-body> [<n>] [--max-iterations[=UInt]] [--max-random-list-elements[=UInt]] [--sep=<Str>] [--syms=<Str>] -- Generates random sentences for a given grammar.
+#   random-sentence-generation <grammar> [--rule-body=<Str>] [-n[=UInt]] [--max-iterations[=UInt]] [--max-random-list-elements[=UInt]] [--sep=<Str>] [--syms=<Str>] -- Generates random sentences for a given grammar.
 #   
-#     <grammar>                            Grammar name.
-#     <rule-body>                          Rule body (to start generation with.)
-#     [<n>]                                Number of sentences. [default: 10]
+#     <grammar>                            Grammar name or definition.
+#     --rule-body=<Str>                    Rule body (to start generation with.) [default: 'TOP']
+#     -n[=UInt]                            Number of sentences. [default: 10]
 #     --max-iterations[=UInt]              Max number of recursive rule replacement iterations. [default: 40]
 #     --max-random-list-elements[=UInt]    Max number of elements to use generate random lists. [default: 6]
 #     --sep=<Str>                          Separator of the join literals; if 'NONE' Raku code lists are returned. [default: ' ']
@@ -126,38 +126,57 @@ Here is example of random sentence generation based on the grammar of the packag
 ["DSL::English::QuantileRegressionWorkflows"](https://raku.land/zef:antononcube/DSL::English::QuantileRegressionWorkflows), [AAp5]:
 
 ```shell
-generate-random-sentences DSL::English::QuantileRegressionWorkflows::Grammar '<workflow-command>' 10
+random-sentence-generation DSL::English::QuantileRegressionWorkflows::Grammar
 ```
 ```
-# compute and echo the time series bottom outliers with the seq(  NUMBER(85)  NUMBER(88)  NUMBER(294) and  NUMBER(54) ,  NUMBER(159) )
-# utilize the qr object VAR_NAME("UHKs3")
-# simple object creation from DATASET_NAME("lyqKv")
-# echo diagram plot error
-# compute a quantile regression
-# compute an QuantileRegression using INTEGER(248) knots , Range[  NUMBER(236) and  NUMBER(66) ,  NUMBER(191) and  NUMBER(63) ,  NUMBER(22) ] probabilities and using the probability seq(  NUMBER(209)  NUMBER(193)  NUMBER(187) ) and using INTEGER(65) interpolation order , using the probabilities Range[  NUMBER(114)  NUMBER(58) ]
-# load dataset DATASET_NAME("16Z1m")
-# echo data summaries
-# delete missing values
-# display graph
+# compute outliers
+# compute the bottom outliers
+# ingest the time series data DATASET_NAME("Y55R8")
+# create from DATASET_NAME("sPPXk")
+# compute anomalies by residuals by the threshold  NUMBER(263)
+# echo of absolute error
+# compute anomalies using residuals by threshold  NUMBER(201)
+# summarize data
+# display summary
+# echo chart of the error
 ```
 
 Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
 
 ```shell
-generate-random-sentences DSL::Bulgarian::QuantileRegressionWorkflows::Grammar '<workflow-command>' 10 --syms='Bulgarian English'
+random-sentence-generation DSL::Bulgarian::QuantileRegressionWorkflows::Grammar  -n=10 --syms='Bulgarian English'
 ```
 ```
-# направи DATASET_NAME("VA0HD")
-# изчисли QuantileRegression
-# създай обект прост начин от DATASET_NAME("byTEY")
-# зареди данни таблица DATASET_NAME("rU3lO")
-# направи чрез DATASET_NAME("7Pxh1")
-# изчисли  QuantileRegression пасване за  вероятност  NUMBER(243)  NUMBER(10) and чрез интерполация степен INTEGER(187)
-# ползвай дейта сет VAR_NAME("RNnw5")
+# изчисли и покажи  QuantileRegression
+# покажи рекапитулации
 # рекапитулирай данни
-# ползвай  масив от данни VAR_NAME("Eqr64")
-# рекапитулирай данни
+# изчисли и ехо времеви серия връх  данни таблица извънредности чрез  Range [  NUMBER(212) ] вероятност
+# изчисли  извънредна стойности чрез  от  NUMBER(273) към  NUMBER(9) чрез стъпка  NUMBER(89) вероятности
+# изчисли дейтасет връх времеви серия извънредности
+# изчисли и ехо даннов масив извънредности
+# ехо чертеж за  абсолютен грешка
+# прочети данни DATASET_NAME("waLYd")
+# чертеж чертеж на относителен грешка чертежи
 ```
+
+Here we generate sentences with a grammar string (that is a valid Raku definition of a grammar):
+
+```shell
+random-sentence-generation -n=5 "
+grammar Parser {
+    rule  TOP  { I <love> <lang> }
+    token love { '♥' | love }
+    token lang { < Raku Perl Rust Go Python Ruby > }
+}"
+```
+```
+# I ♥ Rust
+# I ♥ Ruby
+# I ♥ Go
+# I love Go
+# I ♥ Raku
+```
+
 
 --------
 

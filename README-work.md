@@ -66,21 +66,33 @@ replace-token-names --help
 ### Random sentence generation
 
 ```shell
-generate-random-sentences --help
+random-sentence-generation --help
 ```
 
 Here is example of random sentence generation based on the grammar of the package 
 ["DSL::English::QuantileRegressionWorkflows"](https://raku.land/zef:antononcube/DSL::English::QuantileRegressionWorkflows), [AAp5]:
 
 ```shell
-generate-random-sentences DSL::English::QuantileRegressionWorkflows::Grammar '<workflow-command>' 10
+random-sentence-generation DSL::English::QuantileRegressionWorkflows::Grammar
 ```
 
 Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
 
 ```shell
-generate-random-sentences DSL::Bulgarian::QuantileRegressionWorkflows::Grammar '<workflow-command>' 10 --syms='Bulgarian English'
+random-sentence-generation DSL::Bulgarian::QuantileRegressionWorkflows::Grammar  -n=10 --syms='Bulgarian English'
 ```
+
+Here we generate sentences with a grammar string (that is a valid Raku definition of a grammar):
+
+```shell
+random-sentence-generation -n=5 "
+grammar Parser {
+    rule  TOP  { I <love> <lang> }
+    token love { '♥' | love }
+    token lang { < Raku Perl Rust Go Python Ruby > }
+}"
+```
+
 
 --------
 
