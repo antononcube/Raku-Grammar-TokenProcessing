@@ -75,7 +75,13 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
     method concatenation($/) { make $<repetition>>>.made; }
 
-    method alternation($/) { make $<concatenation>>>.made.pick; }
+    method alternation($/) {
+        if $<token-quoted-list-body> {
+            make $<token-quoted-list-body>.made.pick;
+        } else {
+            make $<concatenation>>>.made.pick;
+        }
+    }
 
     method group($/) { make $/.values[0].made; }
 
