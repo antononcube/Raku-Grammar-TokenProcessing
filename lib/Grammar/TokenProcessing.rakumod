@@ -364,7 +364,14 @@ multi sub take-rule-body(Str $definition is copy) {
     #note $definition.raku;
     $definition = $definition.subst(/ '|' \h* '([\w]+) <?{' .* '}>' /, '').subst(':i', '');
     #note $definition.raku;
-    if $definition ~~ / ^ (<-[{]>*) '{' \h* (.*) \h* '}' (.*) $ / { $definition = ~$1  };
+    if $definition ~~ / ^ (<-[{]>*) '{' \h* (.*) \h* '}' (.*) $ / {
+        $definition = ~$1
+    };
+    #note 'before : ', $definition.raku;
+    if $definition ~~ / ^ \h* '[' \h* (.*) \h* ']' \h* '**' \h* (\d+) \h* $ / {
+        $definition = ( ('[' ~ $0 ~ ']') xx +$1).join(' ')
+    };
+    #note 'after  : ', $definition.raku;
     $definition = $definition.subst( / [ '\{' | '{' ] <-[{}]>* '}' | '<' . '{' <-[{}]>* '}>' /, ''):g;
     $definition = $definition.subst( / [ ':my' | ':our' ] \s+ <-[;]>+ ';' /, ''):g;
     $definition = $definition.subst("\n", ''):g;
