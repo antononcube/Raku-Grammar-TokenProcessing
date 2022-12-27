@@ -360,22 +360,32 @@ multi sub take-rule-body(Str $ruleKey is copy,
 
 multi sub take-rule-body(Str $definition is copy) {
 
-    #note $definition;
-    #note $definition.raku;
+    # DSL specific: Here we remove the rule parts that allow fuzzy matching
     $definition = $definition.subst(/ '|' \h* '([\w]+) <?{' .* '}>' /, '').subst(':i', '');
-    #note $definition.raku;
+
+    # Take the rule definition (e.g. remove `token some-name {`).
     if $definition ~~ / ^ (<-[{]>*) '{' \h* (.*) \h* '}' (.*) $ / {
         $definition = ~$1
     };
-    #note 'before : ', $definition.raku;
+
+    # Replicate / unfold simple quantifier specs.
+    # For example, `token tenner { [<digit> <:Pd>?] ** 3 }`:
+    # 1) Is changed above as `[<digit> <:Pd>?] ** 3`,
+    # 2) Then here it is changed into `[<digit> <:Pd>?] [<digit> <:Pd>?] [<digit> <:Pd>?]`
     if $definition ~~ / ^ \h* '[' \h* (.*) \h* ']' \h* '**' \h* (\d+) \h* $ / {
         $definition = ( ('[' ~ $0 ~ ']') xx +$1).join(' ')
     };
-    #note 'after  : ', $definition.raku;
+
+    # Removing bracketed in-rule code
     $definition = $definition.subst( / [ '\{' | '{' ] <-[{}]>* '}' | '<' . '{' <-[{}]>* '}>' /, ''):g;
+
+    # Remove in-rule variables
     $definition = $definition.subst( / [ ':my' | ':our' ] \s+ <-[;]>+ ';' /, ''):g;
+
+    # Removing new lines
     $definition = $definition.subst("\n", ''):g;
-    #note 'take-rule-body : '.uc, $definition.raku;
+
+    # (The trim is probably not needed)
     return $definition.trim;
 }
 
