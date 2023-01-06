@@ -1,9 +1,6 @@
 #!/usr/bin/env raku
 use v6.d;
 
-use lib '.';
-use lib './lib';
-
 use Grammar::TokenProcessing;
 use Grammar::TokenProcessing::ComprehensiveGrammar;
 

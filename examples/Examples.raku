@@ -1,4 +1,3 @@
-use lib '.';
 
 use Grammar::TokenProcessing;
 use Grammar::TokenProcessing::Grammar;
