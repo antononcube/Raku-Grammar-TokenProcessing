@@ -27,7 +27,9 @@
     "Grammar::TokenProcessing::ComprehensiveGrammar": "lib/Grammar/TokenProcessing/ComprehensiveGrammar.rakumod",
     "Grammar::TokenProcessing::Grammar": "lib/Grammar/TokenProcessing/Grammar.rakumod"
   },
-  "resources": [],
+  "resources": [
+    "dictionary-words-English.txt"
+  ],
   "license": "Artistic-2.0",
   "tags": [
     "grammar",
