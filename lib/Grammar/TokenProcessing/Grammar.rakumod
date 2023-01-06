@@ -42,11 +42,11 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token { 'token' | 'rule' | 'regex' }
 
-  token token-spec { '\'' <-[']>*  '\'' }
+  token token-spec { '\'' <-[' \s]>*  '\'' || <-[| \s]>+ }
 
   token token-spec-list { <token-spec>+ % \s+ }
 
-  token delim { \s* '|' | '||' \s* }
+  token delim { \s* [ '|' | '||' ] \s* }
 
   regex token-quoted-list-body { \s* '<' \s+ [ [\S+]+ % \s* ] \s+ '>' \s* }
 
@@ -58,16 +58,19 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   regex token-body { <token-quoted-list-body> | <token-simple-body> | <token-phrase-body> | <token-complex-body> }
 
-  token token-definition-end { '}' \h* ';'? \h* \n }
+  token token-definition-end { '}' \h* [';' \h*]? \n }
 
   token leading-space { \h* }
 
   regex token-rule-definition {
     <leading-space>
     <token> \s* <token-name-spec> \s*
-    [ '{' || <error( "cannot find \{" )> ]
+    '{'
     <token-body>
-    [ <token-definition-end> || <error( "cannot find <token-definition-end>" )> ] }
+    <token-definition-end> }
+
+#    [ '{' || <error( "cannot find \{" )> ]
+#    [ <token-definition-end> || <error( "cannot find <token-definition-end>" )> ] }
 
   method error($msg) {
     my $parsed = self.target.substr(0, self.pos).trim-trailing;
