@@ -284,6 +284,7 @@ my %randomTokenGenerators =
         '<.alnum>' => -> { 'ALNUM(' ~ random-string(chars => 1, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ ')'},
         '<digit>' => -> { 'DIGIT(' ~ random-string(chars => 1, ranges => "0" .. "9") ~ ')'},
         '<.digit>' => -> { 'DIGIT(' ~ random-string(chars => 1, ranges => "0" .. "9") ~ ')'},
+        '<:Pd>' => -> { '-' },
         '<wl-expr>' => -> { 'WL_EXPR("Sqrt[3]")' },
         '<code-expr>' => -> { 'CODE_EXPR("1+1")' },
         '<shell-expr>' => -> { 'SHELL_EXPR("ls")' },
