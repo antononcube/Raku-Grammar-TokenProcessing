@@ -9,7 +9,7 @@ use DSL::English::DataQueryWorkflows::Grammar;
 
 use Grammar::TokenProcessing;
 
-plan 4;
+plan 6;
 
 ##-----------------------------------------------------------
 ## 1
@@ -68,5 +68,16 @@ EOI
 
 ok Grammar::TokenProcessing::Grammar.parse($rule4, rule => 'token-rule-definition-list' );
 
+
+##-----------------------------------------------------------
+## 5
+##-----------------------------------------------------------
+ok Grammar::TokenProcessing::Grammar.subparse(" 'весовой' | 'весовая' | 'весовое' | 'весовые' ", rule => 'token-simple-body');
+
+
+##-----------------------------------------------------------
+## 6
+##-----------------------------------------------------------
+ok Grammar::TokenProcessing::Grammar.subparse(' весовой | весовая | весовое | весовые ', rule => 'token-simple-body');
 
 done-testing;
