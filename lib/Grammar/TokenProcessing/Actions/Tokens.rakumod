@@ -59,7 +59,8 @@ class Grammar::TokenProcessing::Actions::Tokens {
     }
 
     method token-spec($/) {
-        my Str $term = substr($/.Str, 1, $/.Str.chars - 2);
+        my Str $term = $/.Str;
+        $term = $term ~~ / '\'' .+  '\'' / ?? substr($/.Str, 1, $/.Str.chars - 2) !! $term;
         make $term;
     }
 
