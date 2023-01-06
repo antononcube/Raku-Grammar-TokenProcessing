@@ -42,7 +42,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token { 'token' | 'rule' | 'regex' }
 
-  token token-spec { '\'' <-[' \s]>*  '\'' || <-[| \s]>+ }
+  token token-spec { '\'' <-[' \s]>*  '\'' || <alnum>+ }
 
   token token-spec-list { <token-spec>+ % \s+ }
 
