@@ -12,7 +12,11 @@ use Text::CSV;
 use Grammar::TokenProcessing;
 use Data::Reshapers;
 
-my @grammars = [DSL::English::ClassificationWorkflows::Grammar, DSL::English::DataQueryWorkflows::Grammar, DSL::English::LatentSemanticAnalysisWorkflows::Grammar, DSL::English::QuantileRegressionWorkflows::Grammar, DSL::English::RecommenderWorkflows::Grammar];
+my @grammars = [DSL::English::ClassificationWorkflows::Grammar,
+                DSL::English::DataQueryWorkflows::Grammar,
+                DSL::English::LatentSemanticAnalysisWorkflows::Grammar,
+                DSL::English::QuantileRegressionWorkflows::Grammar,
+                DSL::English::RecommenderWorkflows::Grammar];
 
 .say for @grammars.map({ .^name });
 
