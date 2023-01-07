@@ -87,12 +87,12 @@ Here we generate sentences with a grammar string (that is a valid Raku definitio
 ```shell
 random-sentence-generation -n=5 "
 grammar Parser {
-    rule  TOP  { I <love> <lang> }
+    rule  TOP  { I [ <love> | <hate> ] <lang> }
     token love { '♥' ** 1..3 | love }
+    token hate { '🖕' ** 1..2 | hate }
     token lang { < Raku Perl Rust Go Python Ruby > }
 }"
 ```
-
 
 --------
 

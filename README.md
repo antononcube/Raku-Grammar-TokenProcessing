@@ -129,16 +129,16 @@ Here is example of random sentence generation based on the grammar of the packag
 random-sentence-generation DSL::English::QuantileRegressionWorkflows::Grammar
 ```
 ```
-# display plot
-# summarize data
-# display data summary
-# echo current pipeline value using the function
-# utilize DATASET_NAME("pUovv")
-# echo plot using dates
-# rescale value axis
-# do a quantile regression
-# compute an QuantileRegression
-# utilize the QR object VAR_NAME("BWZ7u")
+# utilize the object VAR_NAME("g3ksl")
+# compute anomalies with threshold
+# simple object creation DATASET_NAME("4Lchj")
+# make an object directly DATASET_NAME("cXqJA")
+# compute the data bottom outliers
+# compute and display outliers by the probabilities Range [  NUMBER(212) ,  NUMBER(251)  NUMBER(204) ]
+# compute anomalies by residuals by the threshold
+# utilize quantile regression object VAR_NAME("PiSsm")
+# show date list diagram date origin
+# show QuantileRegression , fitted QuantileRegressionFit and outliers
 ```
 
 Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
@@ -147,16 +147,16 @@ Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
 random-sentence-generation DSL::Bulgarian::QuantileRegressionWorkflows::Grammar  -n=10 --syms='Bulgarian English'
 ```
 ```
+# ехо чертежи за относителен грешка чертежи
+# ехо дата списък чертеж чрез дата нула
+# присвои на VAR_NAME("9wPWH") обект
+# покажи масив от данни and дейтасет , времеви серия дата списък чертежи
+# рекапитулирай данни
+# изчисли аномалии от остатъци чрез праг
 # изтрий липсващи
-# покажи граф чрез дати чрез дата нула
-# покажи граф
-# покажи на  грешка
-# направи със DATASET_NAME("z91ts")
-# прост обект създание DATASET_NAME("cBipD")
-# премащабирай  оси
-# изчисли аномалии чрез  извънредна стойност IDENTIFIER VAR_NAME("yxwOh")
-# прави QuantileRegression пасване на INTEGER(172) интерполация порядък and чрез възли  NUMBER(60) ,  NUMBER(283)  NUMBER(286)  NUMBER(3)  NUMBER(88)
-# изчисли  връх извънредности
+# движещ Median чрез
+# рекапитулирай  данни
+# изчисли квантила регресия пасване чрез  вероятност Range [  NUMBER(272) ,  NUMBER(116) ,  NUMBER(127) ] , чрез and , and  възли , INTEGER(158) възли , INTEGER(116) интерполация степен , чрез интерполация порядък INTEGER(131) , INTEGER(30) възли
 ```
 
 Here we generate sentences with a grammar string (that is a valid Raku definition of a grammar):
@@ -164,17 +164,18 @@ Here we generate sentences with a grammar string (that is a valid Raku definitio
 ```shell
 random-sentence-generation -n=5 "
 grammar Parser {
-    rule  TOP  { I <love> <lang> }
+    rule  TOP  { I [ <love> | <hate> ] <lang> }
     token love { '♥' ** 1..3 | love }
+    token hate { '🖕' ** 1..2 | hate }
     token lang { < Raku Perl Rust Go Python Ruby > }
 }"
 ```
 ```
-# I ♥ Raku
-# I ♥ Raku
-# I love Go
-# I ♥ ♥ Rust
+# I ♥ ♥ ♥ Python
 # I love Rust
+# I love Perl
+# I hate Ruby
+# I 🖕 Python
 ```
 
 
