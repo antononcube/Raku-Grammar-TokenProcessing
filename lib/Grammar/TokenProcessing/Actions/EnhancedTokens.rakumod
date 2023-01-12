@@ -54,7 +54,10 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
     method token-spec($/) {
 
         #| Get the token string
-        my Str $term = substr($/.Str, 1, $/.Str.chars - 2);
+        my Str $term = $/.Str;
+        if $term ~~ / '\'' .* '\'' / {
+            $term .= substr(1, $/.Str.chars - 2);
+        }
 
         if $term (elem) self.do-not-enhance {
             make $/.Str;
