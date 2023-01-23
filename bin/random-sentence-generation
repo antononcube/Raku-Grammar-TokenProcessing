@@ -36,7 +36,7 @@ multi MAIN(
         $focusGrammar = ::($grammar);
     }
 
-    die "The first argument is expected to be of type Grammar or a string that is a valid grammer definition."
+    die "The first argument is expected to be of type Grammar or a string that is a valid grammar definition."
     unless $focusGrammar ~~ Grammar;
 
     my %focusRules = $focusGrammar.^method_table;
