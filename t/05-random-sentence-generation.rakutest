@@ -9,7 +9,7 @@ use DSL::English::DataQueryWorkflows::Grammar;
 
 use Grammar::TokenProcessing;
 
-plan 3;
+plan 5;
 
 ##-----------------------------------------------------------
 ## 1÷3
@@ -25,17 +25,35 @@ my @randSentences1 = (^10).map({ random-sentence-generation(
         random-token-generators => Whatever,
         sep => ' ') }).sort.unique(as => { $_.join(' ') });
 
+## 1
 is @randSentences1.isa(Array),
         True,
         'DSL::English::DataQueryWorkflows::Grammar test: is Array';
 
+## 2
 is  @randSentences1.all ~~ Str,
         True,
         'DSL::English::DataQueryWorkflows::Grammar test: all Str';
 
+## 3
 is @randSentences1.elems ≥ 8,
         True,
         'DSL::English::DataQueryWorkflows::Grammar test: sufficient number of elements';
+
+##-----------------------------------------------------------
+## 4÷5
+##-----------------------------------------------------------
+grammar Parser {
+        rule  TOP  { I <love> <lang> }
+        token love { '♥' | '🤮' | love }
+        token lang { < Raku Perl Rust Go Python Ruby > }
+}
+
+## 4
+ok random-sentence-generation(Parser);
+
+## 5
+ok random-sentence-generation(Parser, '<love>');
 
 done-testing;
 
