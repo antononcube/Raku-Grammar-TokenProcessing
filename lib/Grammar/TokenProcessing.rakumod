@@ -76,6 +76,22 @@ multi get-resource-words('English') {
 }
 
 ##===========================================================
+## Convert rule to regex
+##===========================================================
+proto sub rule-to-regex($body) is export {*}
+
+multi sub rule-to-regex(Str $body is copy) {
+    # This ad hoc implementation should be probably better be refactored
+    # to use Grammar::TokenProcessing::ComprehensiveGrammar.
+    $body = $body
+           .subst( / ('\'' <.alnum>+ '\'') \h* '?' /, { '[' ~ $0.Str ~ ' \h+ ]?' }, :g)
+           .subst( / (<.alnum>+) \h* '?' /, { '\h* [\h+ ' ~ $0.Str ~ ']?' }, :g)
+           .subst( / <?after ['?' | <.alnum> | '\'' | ']']> \s+ <?before [<.alnum> | '\'' |  '[']> /, ' \h+ ', :g)
+           .subst( / <?after [ '+' | '*' ]> \s+ <?before '\\'> /, ' \h+ ', :g);
+    return $body;
+}
+
+##===========================================================
 ## Get tokens
 ##===========================================================
 proto get-tokens(Str $spec) is export {*}
