@@ -12,7 +12,8 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
   #--------------------------------------------------------------------
   # Comprehensive body definitions
   #--------------------------------------------------------------------
-  regex token-spec-element { <token-spec> | <token-name-spec> | <token-renamed-spec> | <white-space-regex> }
+  regex token-spec-element { <token-spec> | <token-name-spec> | <token-renamed-spec> | <white-space-regex> | <backslashed-char-class> }
+  regex backslashed-char-class { '\w' | '\W' | '\d' | '\D' | '\s' | '\S' | '\t' | '\T' | '\n' | '\N' | '\h' | '\H' | '\v' | '\V' };
   regex repeat-spec-delim { <-[{}]>* }
   token quantifier { '+' | '*' }
   token repeat-range { $<count>=(\d+) | $<from>=(\d+) [ '..' | '...' ] $<to>=(\d+ | '*') }
