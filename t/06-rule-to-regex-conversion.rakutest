@@ -34,7 +34,7 @@ my %ruleBodies =
 
 my $grNew = make-regex-specs-grammar('MyNewGrammar', %ruleBodies);
 
-.say for $grNew.^method_table;;
+# .say for $grNew.^method_table;
 
 plan *;
 
