@@ -81,13 +81,13 @@ multi get-resource-words('English') {
 proto sub rule-to-regex($body) is export {*}
 
 multi sub rule-to-regex(Str $body is copy) {
-    # This ad hoc implementation should be probably better be refactored
+    # This ad hoc implementation should be refactored
     # to use Grammar::TokenProcessing::ComprehensiveGrammar.
     $body = $body
            .subst( / ('\'' <.alnum>+ '\'') \h* '?' /, { '[' ~ $0.Str ~ ' \h+ ]?' }, :g)
-           .subst( / (<.alnum>+) \h* '?' /, { '\h* [\h+ ' ~ $0.Str ~ ']?' }, :g)
-           .subst( / <?after ['?' | <.alnum> | '\'' | ']']> \s+ <?before [<.alnum> | '\'' |  '[']> /, ' \h+ ', :g)
-           .subst( / <?after [ '+' | '*' ]> \s+ <?before '\\'> /, ' \h+ ', :g);
+           .subst( / \s+ (<.alnum>+) \h* '?' /, { ' \h* [\h+ ' ~ $0.Str ~ ']?' }, :g)
+           .subst( / <?after ['?' | <.alnum> | '\'' | ']']> \s+ <?before [ <.alnum> | '\'' | '\w' | '\d' | '[']> /, ' \h+ ', :g)
+           .subst( / <?after ['\w' | '\d'] ['+' | '*']> \s+ <?before [ '\w' | '\d' | '<' ]> /, ' \h+ ', :g);
     return $body;
 }
 
@@ -298,8 +298,10 @@ my %randomTokenGenerators =
         '<.ws>?' => -> { [' ', ''].pick },
         '<alnum>' => -> { 'ALNUM(' ~ random-string(chars => 1, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ ')'},
         '<.alnum>' => -> { 'ALNUM(' ~ random-string(chars => 1, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ ')'},
+        '\w' => -> { 'ALNUM(' ~ random-string(chars => 1, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ ')'},
         '<digit>' => -> { 'DIGIT(' ~ random-string(chars => 1, ranges => "0" .. "9") ~ ')'},
         '<.digit>' => -> { 'DIGIT(' ~ random-string(chars => 1, ranges => "0" .. "9") ~ ')'},
+        '\d' => -> { 'DIGIT(' ~ random-string(chars => 1, ranges => "0" .. "9") ~ ')'},
         '<:Pd>' => -> { '-' },
         '<wl-expr>' => -> { 'WL_EXPR("Sqrt[3]")' },
         '<code-expr>' => -> { 'CODE_EXPR("1+1")' },
