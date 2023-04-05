@@ -39,6 +39,14 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
     method token-spec-element($/) { make $/.values[0].made; }
 
+    method backslashed-char-class($/) {
+        given $/.Str.trim {
+            when '\w' { make '<alnum>'; }
+            when '\d' { make '<digit>'; }
+            default { make ' '; }
+        };
+    }
+
     method repeat-spec-delim($/) {
         # The repetitions delimiter matcher is not comprehensive.
         # Hence, we just stringify it.
