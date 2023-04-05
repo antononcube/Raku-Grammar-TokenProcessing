@@ -1,0 +1,59 @@
+use v6.d;
+
+use lib '.';
+use lib './lib';
+
+use Grammar::TokenProcessing;
+
+use Test;
+
+# This subroutine makes a grammar from a hash of named rule bodies.
+sub make-regex-specs-grammar(Str $name, %ruleBodies) {
+    use MONKEY-SEE-NO-EVAL;
+
+    my $grmr := Metamodel::GrammarHOW.new_type(:$name);
+    my @allRuleNames;
+    for %ruleBodies.kv -> $id, $body  {
+        my $ruleName = $id.subst(/\s+/, '-'):g;
+        my $ruleBody = EVAL 'regex { ' ~ rule-to-regex($body) ~ '}';
+        $grmr.^add_method($ruleName, $ruleBody);
+        $ruleBody.set_name($ruleName);
+        @allRuleNames.append($ruleName)
+    }
+    my $top = EVAL 'regex { ' ~ @allRuleNames.map({ "<$_>" }).join(' | ') ~ ' }';
+    $grmr.^add_method('TOP', $top);
+    $grmr.^compose;
+}
+
+my %ruleBodies =
+        adj => '[ large | small ] [ dark | milk ] square?',
+        kitkat => '[ large | small ] [ dark | milk ] square? kit kat',
+        kitkat2 => '[[ large | small ] [ dark | milk ] green?] \h* [kit kat]',
+        cookie => 'generic? chocolate cookie \w+ \d+',
+        cookie-limited => 'chocolate cookie \d ** 1..2';
+
+my $grNew = make-regex-specs-grammar('MyNewGrammar', %ruleBodies);
+
+.say for $grNew.^method_table;;
+
+plan *;
+
+## 1
+isa-ok $grNew, Grammar, 'expected type of the grammar';
+
+## 2
+ok $grNew.parse('large dark kit kat'), 'large dark kit kat';
+
+## 3
+ok $grNew.parse('large milk green kit kat'), 'large dark kit kat';
+
+## 4
+ok $grNew.parse('generic chocolate cookie b 12'), 'generic chocolate cookie b 12';
+
+## 5
+ok $grNew.parse('chocolate cookie 23'), 'chocolate cookie 23';
+
+## 6
+nok $grNew.parse('chocolate cookie 2333'), 'chocolate cookie 2333';
+
+done-testing;
