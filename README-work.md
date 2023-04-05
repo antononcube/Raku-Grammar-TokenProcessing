@@ -94,6 +94,26 @@ grammar Parser {
 }"
 ```
 
+### Converting rules to regexes
+
+Here are examples of converting rules to regexes:
+
+```perl6
+use Grammar::TokenProcessing;
+
+my %ruleBodies =
+        cookie => 'generic? chocolate cookie \w+ \d+',
+        cookie-limited => 'crunch bar \d ** 1..2';
+
+for %ruleBodies.kv -> $k, $v {
+    say "rule   : $v";
+    say "regex  : {rule-to-regex($v)}\n";
+}
+```
+
+More detailed examples -- with grammar creation for regex verification -- can be found in the test file 
+["06-rule-to-regex-conversion.rakutest"](./t/06-rule-to-regex-conversion.rakutest).
+
 --------
 
 ## References

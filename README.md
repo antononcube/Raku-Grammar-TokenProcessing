@@ -129,16 +129,16 @@ Here is example of random sentence generation based on the grammar of the packag
 random-sentence-generation DSL::English::QuantileRegressionWorkflows::Grammar
 ```
 ```
-# utilize the object VAR_NAME("g3ksl")
-# compute anomalies with threshold
-# simple object creation DATASET_NAME("4Lchj")
-# make an object directly DATASET_NAME("cXqJA")
-# compute the data bottom outliers
-# compute and display outliers by the probabilities Range [  NUMBER(212) ,  NUMBER(251)  NUMBER(204) ]
-# compute anomalies by residuals by the threshold
-# utilize quantile regression object VAR_NAME("PiSsm")
-# show date list diagram date origin
-# show QuantileRegression , fitted QuantileRegressionFit and outliers
+# compute anomalies with residuals using the threshold NUMBER(12.44)
+# resample
+# echo plot the error plot
+# compute and show bottom the time series data outliers
+# take utilize using DATASET_NAME("RMwQ9")
+# rescale axes
+# show outliers
+# compute anomalies using residuals by threshold NUMBER(270.37)
+# moving map WL_EXPR("Sqrt[3]") using the NUMBER(76.54) NUMBER(94.92) NUMBER(215.75) and NUMBER(9.17) , NUMBER(57.94) weights
+# show date list diagram by date origin DIGIT(9) DIGIT(8) DIGIT(8) DIGIT(9) - DIGIT(4) DIGIT(6) - DIGIT(8) DIGIT(5)
 ```
 
 Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
@@ -147,16 +147,16 @@ Here is another example using the Bulgarian localization of [AAp5] in [AAp7]:
 random-sentence-generation DSL::Bulgarian::QuantileRegressionWorkflows::Grammar  -n=10 --syms='Bulgarian English'
 ```
 ```
-# ехо чертежи за относителен грешка чертежи
-# ехо дата списък чертеж чрез дата нула
-# присвои на VAR_NAME("9wPWH") обект
-# покажи масив от данни and дейтасет , времеви серия дата списък чертежи
+# изчисли и покажи  дейта сет извънредности чрез Range [ NUMBER(92.56) , NUMBER(245.24) and NUMBER(136.3) NUMBER(225.38) ] вероятност
+# прави квантила регресия пасване
+# присвои канален обект до VAR_NAME("z5TbI")
+# изчисли QuantileRegression пасване със от NUMBER(16.9) до NUMBER(173.46) стъпка NUMBER(27.55) възли
 # рекапитулирай данни
-# изчисли аномалии от остатъци чрез праг
-# изтрий липсващи
-# движещ Median чрез
-# рекапитулирай  данни
-# изчисли квантила регресия пасване чрез  вероятност Range [  NUMBER(272) ,  NUMBER(116) ,  NUMBER(127) ] , чрез and , and  възли , INTEGER(158) възли , INTEGER(116) интерполация степен , чрез интерполация порядък INTEGER(131) , INTEGER(30) възли
+# ползвай  дейта сет VAR_NAME("RZRo7")
+# премащабирай  оси
+# вземи ползвай от DATASET_NAME("3SKQm")
+# изчисли и покажи  извънредности чрез  от NUMBER(172.37) към NUMBER(91.13) чрез стъпка NUMBER(193.01)
+# изчисли времеви серия данни извънредности чрез  Range[ NUMBER(70.13) NUMBER(177.74) and NUMBER(169.68) NUMBER(222.75) ]
 ```
 
 Here we generate sentences with a grammar string (that is a valid Raku definition of a grammar):
@@ -171,13 +171,39 @@ grammar Parser {
 }"
 ```
 ```
-# I ♥ ♥ ♥ Python
-# I love Rust
+# I ♥ ♥ Go
 # I love Perl
-# I hate Ruby
-# I 🖕 Python
+# I love Perl
+# I love Raku
+# I 🖕 Perl
 ```
 
+### Converting rules to regexes
+
+Here are examples of converting rules to regexes:
+
+```perl6
+use Grammar::TokenProcessing;
+
+my %ruleBodies =
+        cookie => 'generic? chocolate cookie \w+ \d+',
+        cookie-limited => 'crunch bar \d ** 1..2';
+
+for %ruleBodies.kv -> $k, $v {
+    say "rule   : $v";
+    say "regex  : {rule-to-regex($v)}\n";
+}
+```
+```
+# rule   : generic? chocolate cookie \w+ \d+
+# regex  : generic? \h+ chocolate \h+ cookie \h+ \w+ \h+ \d+
+# 
+# rule   : crunch bar \d ** 1..2
+# regex  : crunch \h+ bar \h+ \d ** 1..2
+```
+
+More detailed examples -- with grammar creation for regex verification -- can be found in the test file 
+["06-rule-to-regex-conversion.rakutest"](./t/06-rule-to-regex-conversion.rakutest).
 
 --------
 
