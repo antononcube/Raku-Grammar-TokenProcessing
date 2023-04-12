@@ -84,10 +84,12 @@ multi sub rule-to-regex(Str $body is copy) {
     # This ad hoc implementation should be refactored
     # to use Grammar::TokenProcessing::ComprehensiveGrammar.
     $body = $body
-           .subst( / ('\'' <.alnum>+ '\'') \h* '?' /, { '[' ~ $0.Str ~ ' \h+ ]?' }, :g)
-           .subst( / \s+ (<.alnum>+) \h* '?' /, { ' \h* [\h+ ' ~ $0.Str ~ ']?' }, :g)
-           .subst( / <?after ['?' | <.alnum> | '\'' | ']']> \s+ <?before [ <.alnum> | '\'' | '\w' | '\d' | '[']> /, ' \h+ ', :g)
-           .subst( / <?after ['\w' | '\d'] ['+' | '*']> \s+ <?before [ '\w' | '\d' | '<' ]> /, ' \h+ ', :g);
+            .subst(/ <wb> '-' <wb> /, ' <:Pd> ')
+            .subst( / ('\'' <.alnum>+ '\'') \h* '?' /, { '[' ~ $0.Str ~ ' \h+ ]?' }, :g)
+            .subst( / \s+ (<.alnum>+) \h* '?' /, { ' \h* [\h+ ' ~ $0.Str ~ ']?' }, :g)
+            .subst( / <?after ['?' | <.alnum> | '\'' | ']']> \s+ <?before [ <.alnum> | '\'' | '\w' | '\d' | '[']> /, ' \h+ ', :g)
+            .subst( / <?after ['\w' | '\d'] ['+' | '*']> \s+ <?before [ '\w' | '\d' | '<' ]> /, ' \h+ ', :g);
+
     return $body;
 }
 
