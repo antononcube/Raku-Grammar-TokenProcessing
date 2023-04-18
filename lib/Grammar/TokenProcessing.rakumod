@@ -78,6 +78,8 @@ multi get-resource-words('English') {
 ##===========================================================
 ## Convert rule to regex
 ##===========================================================
+
+#| Converts a rule into a regex.
 proto sub rule-to-regex($body) is export {*}
 
 multi sub rule-to-regex(Str $body is copy) {
@@ -96,6 +98,8 @@ multi sub rule-to-regex(Str $body is copy) {
 ##===========================================================
 ## Grammar source code
 ##===========================================================
+
+#| Gives the source of a grammar.
 proto sub grammar-source-code(Grammar $gr) is export {*}
 
 multi sub grammar-source-code(Grammar $gr --> Str) {
