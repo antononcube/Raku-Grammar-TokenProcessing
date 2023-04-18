@@ -94,6 +94,23 @@ multi sub rule-to-regex(Str $body is copy) {
 }
 
 ##===========================================================
+## Grammar source code
+##===========================================================
+proto sub grammar-source-code(Grammar $gr) is export {*}
+
+multi sub grammar-source-code(Grammar $gr --> Str) {
+    my @grLines;
+    for $gr.^method_table.kv -> $name, $body {
+        @grLines.append: "\t{$body.^name.lc} $name {$body.raku.subst(/ ^ .* '{'/, '{')}" ;
+    }
+    @grLines = @grLines.sort;
+    @grLines.prepend: "grammar {$gr.^name} \{";
+    @grLines.append: '}';
+
+    return @grLines.join("\n");
+}
+
+##===========================================================
 ## Get tokens
 ##===========================================================
 proto get-tokens(Str $spec) is export {*}
