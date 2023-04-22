@@ -103,12 +103,15 @@ multi sub rule-to-regex(Str $body is copy) {
 proto sub grammar-source-code(Grammar $gr) is export {*}
 
 multi sub grammar-source-code(Grammar $gr --> Str) {
+
+    my $parents = $gr.^parents.map({ $_.^name }).grep({ $_ ∉ <Grammar Match Capture> });
+
     my @grLines;
     for $gr.^method_table.kv -> $name, $body {
         @grLines.append: "\t{$body.^name.lc} $name {$body.raku.subst(/ ^ .* '{'/, '{')}" ;
     }
     @grLines = @grLines.sort;
-    @grLines.prepend: "grammar {$gr.^name} \{";
+    @grLines.prepend: "grammar {$gr.^name} {$parents.map({"\n{' ' x 'grammar'.chars} is $_"}).join} \{";
     @grLines.append: '}';
 
     return @grLines.join("\n");
