@@ -1,5 +1,7 @@
 
 use Grammar::TokenProcessing;
+use DSL::English::LatentSemanticAnalysisWorkflows::Grammar;
+use DSL::English::ClassificationWorkflows::Grammar;
 
 
 ##===========================================================
@@ -7,9 +9,14 @@ use Grammar::TokenProcessing;
 ##===========================================================
 
 my $grSpec = q:to/EOI/;
-grammar Simple {
+grammar Simple
+        is DSL::English::LatentSemanticAnalysisWorkflows::Grammar
+        is DSL::English::ClassificationWorkflows::Grammar
+{
 
-  token TOP { <recommend-nns> }
+  token TOP { <recommend-nns> |
+              <DSL::English::LatentSemanticAnalysisWorkflows::Grammar::workflow-command> |
+              <DSL::English::ClassificationWorkflows::Grammar::workflow-command> }
   token ar { 'ar' }
   token recommend { 'recommend' | 'suggest' }
   token recommender { 'recommender' | 'suggester' }
@@ -39,3 +46,12 @@ my $gr2 = EVAL grammar-source-code($gr).subst('Simple', 'Simple2');
 # Example parsing
 say ::('Simple2').parse('recommend nearest neighbours');
 
+say '-' x 120;
+
+# Example parsing with the LSA grammar
+say ::('Simple2').parse('extract 20 topics');
+
+say '-' x 120;
+
+# Example parsing with the ClCon grammar
+say ::('Simple2').parse('split the data with ratio 0.8');
