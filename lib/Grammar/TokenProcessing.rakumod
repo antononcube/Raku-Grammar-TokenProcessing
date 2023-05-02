@@ -108,7 +108,7 @@ multi sub grammar-source-code(Grammar $gr --> Str) {
 
     my @grLines;
     for $gr.^method_table.kv -> $name, $body {
-        @grLines.append: "\t{$body.^name.lc} $name {$body.raku.subst(/ ^ .* '{'/, '{')}" ;
+        @grLines.append: "\t{$body.^name.lc} $name {$body.raku.subst(/ ^ .*? '{'/, '{')}" ;
     }
     @grLines = @grLines.sort;
     @grLines.prepend: "grammar {$gr.^name} {$parents.map({"\n{' ' x 'grammar'.chars} is $_"}).join} \{";
