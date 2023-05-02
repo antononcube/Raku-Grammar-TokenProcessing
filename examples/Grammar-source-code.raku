@@ -1,3 +1,4 @@
+use v6.d;
 
 use Grammar::TokenProcessing;
 use DSL::English::LatentSemanticAnalysisWorkflows::Grammar;
@@ -18,7 +19,7 @@ grammar Simple
               <DSL::English::LatentSemanticAnalysisWorkflows::Grammar::workflow-command> |
               <DSL::English::ClassificationWorkflows::Grammar::workflow-command> }
   token ar { 'ar' }
-  token recommend { 'recommend' | 'suggest' }
+  token recommend {[ 'recommend' | 'suggest' ] { make 'RECS'; }}
   token recommender { 'recommender' | 'suggester' }
   token suggest { 'suggest' | 'recommend' | 'propose' }
   token nearest-neighbors { 'nearest' \h+ [ neighbours | neighbors ] }
@@ -34,6 +35,8 @@ my $gr = EVAL($grSpec);
 
 #------------------------------------------------------------------------------------------------------------------------
 say '-' x 120;
+
+#.say for $gr.^method_table;
 
 # Print out grammar source code
 say grammar-source-code($gr);
