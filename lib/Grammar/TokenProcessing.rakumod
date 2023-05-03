@@ -100,15 +100,17 @@ multi sub rule-to-regex(Str $body is copy) {
 ##===========================================================
 
 #| Gives the source of a grammar.
-proto sub grammar-source-code(Grammar $gr) is export {*}
+proto sub grammar-source-code(Grammar $gr, |) is export {*}
 
-multi sub grammar-source-code(Grammar $gr --> Str) {
+multi sub grammar-source-code(Grammar $gr, :@exclusions is copy = Empty --> Str) {
 
     my $parents = $gr.^parents.map({ $_.^name }).grep({ $_ ∉ <Grammar Match Capture> });
 
     my @grLines;
     for $gr.^method_table.kv -> $name, $body {
-        @grLines.append: "\t{$body.^name.lc} $name {$body.raku.subst(/ ^ .*? '{'/, '{')}" ;
+        if $name ∉ @exclusions {
+            @grLines.append: "\t{ $body.^name.lc } $name { $body.raku.subst(/ ^ .*? '{'/, '{') }";
+        }
     }
     @grLines = @grLines.sort;
     @grLines.prepend: "grammar {$gr.^name} {$parents.map({"\n{' ' x 'grammar'.chars} is $_"}).join} \{";
