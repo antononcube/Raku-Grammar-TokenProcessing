@@ -108,7 +108,7 @@ multi sub grammar-source-code(Grammar $gr,
         --> Str) {
 
     for @roles -> $r {
-        @exclusions.append($r.^methods.map({ $_.name }));
+        @exclusions.append($r.^methods.map({ $_.name }).grep({ $_ ne 'TOP' }));
     }
 
     my $parents = $gr.^parents.map({ $_.^name }).grep({ $_ ∉ <Grammar Match Capture> });
