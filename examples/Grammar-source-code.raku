@@ -41,13 +41,22 @@ my $gr = EVAL($grSpec);
 #------------------------------------------------------------------------------------------------------------------------
 say '-' x 120;
 
+#note DSL::English::DataQueryWorkflows::Grammarish.^methods;
+#note DSL::English::DataQueryWorkflows::Grammarish.^methods.map({ $_.name });
+
 #.say for $gr.^method_table;
-my grammar Dummy does DSL::English::DataQueryWorkflows::Grammarish {};
-my @exclusions = Dummy.^method_table.keys;
+# One way
+#my grammar Dummy does DSL::English::DataQueryWorkflows::Grammarish {};
+#my @exclusions = Dummy.^method_table.keys;
+#say grammar-source-code($gr, :@exclusions);
+
+# Second way
+#my @exclusions = DSL::English::DataQueryWorkflows::Grammarish.^methods.map({ $_.name });
 #my @exclusions = Empty;
+#say grammar-source-code($gr, :@exclusions);
 
 # Print out grammar source code
-say grammar-source-code($gr, :@exclusions);
+say grammar-source-code($gr, roles => [DSL::English::DataQueryWorkflows::Grammarish, ]);
 
 #------------------------------------------------------------------------------------------------------------------------
 say '-' x 120;
