@@ -102,7 +102,14 @@ multi sub rule-to-regex(Str $body is copy) {
 #| Gives the source of a grammar.
 proto sub grammar-source-code(Grammar $gr, |) is export {*}
 
-multi sub grammar-source-code(Grammar $gr, :@exclusions is copy = Empty --> Str) {
+multi sub grammar-source-code(Grammar $gr,
+                              :@exclusions is copy = Empty,
+                              :@roles = Empty
+        --> Str) {
+
+    for @roles -> $r {
+        @exclusions.append($r.^methods.map({ $_.name }));
+    }
 
     my $parents = $gr.^parents.map({ $_.^name }).grep({ $_ ∉ <Grammar Match Capture> });
 
@@ -113,7 +120,8 @@ multi sub grammar-source-code(Grammar $gr, :@exclusions is copy = Empty --> Str)
         }
     }
     @grLines = @grLines.sort;
-    @grLines.prepend: "grammar {$gr.^name} {$parents.map({"\n{' ' x 'grammar'.chars} is $_"}).join} \{";
+    my $indent = "\n{' ' x 'grammar'.chars}";
+    @grLines.prepend: "grammar {$gr.^name} {@roles.map({"$indent does {$_.^name}"}).join} {$parents.map({"$indent is $_"}).join} \{";
     @grLines.append: '}';
 
     return @grLines.join("\n");
