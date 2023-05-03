@@ -1,8 +1,12 @@
 use v6.d;
 
+use lib '.';
+use lib './lib';
+
 use Grammar::TokenProcessing;
 use DSL::English::LatentSemanticAnalysisWorkflows::Grammar;
 use DSL::English::ClassificationWorkflows::Grammar;
+use DSL::English::DataQueryWorkflows::Grammarish;
 
 
 ##===========================================================
@@ -11,6 +15,7 @@ use DSL::English::ClassificationWorkflows::Grammar;
 
 my $grSpec = q:to/EOI/;
 grammar Simple
+        does DSL::English::DataQueryWorkflows::Grammarish
         is DSL::English::LatentSemanticAnalysisWorkflows::Grammar
         is DSL::English::ClassificationWorkflows::Grammar
 {
@@ -37,9 +42,12 @@ my $gr = EVAL($grSpec);
 say '-' x 120;
 
 #.say for $gr.^method_table;
+my grammar Dummy does DSL::English::DataQueryWorkflows::Grammarish {};
+my @exclusions = Dummy.^method_table.keys;
+#my @exclusions = Empty;
 
 # Print out grammar source code
-say grammar-source-code($gr);
+say grammar-source-code($gr, :@exclusions);
 
 #------------------------------------------------------------------------------------------------------------------------
 say '-' x 120;
