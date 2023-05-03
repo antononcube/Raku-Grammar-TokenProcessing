@@ -1,8 +1,5 @@
 use v6.d;
 
-use lib '.';
-use lib './lib';
-
 use Grammar::TokenProcessing;
 use DSL::English::LatentSemanticAnalysisWorkflows::Grammar;
 use DSL::English::ClassificationWorkflows::Grammar;
