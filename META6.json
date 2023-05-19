@@ -1,13 +1,14 @@
 {
   "name": "Grammar::TokenProcessing",
   "description": "Processing grammar files in order to extract tokens, to replace token names, or to add fuzzy matching expressions in token definitions.",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "perl": "6.d",
   "authors": [
     "Anton Antonov"
   ],
   "auth": "zef:antononcube",
   "depends": [
+    "Data::Generators:ver<0.1.6+>",
     "Data::Reshapers:ver<0.2.7+>",
     "Lingua::EN::Stem::Porter:ver<1.2+>",
     "Text::Levenshtein::Damerau:ver<0.3.0+>"
