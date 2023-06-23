@@ -20,6 +20,7 @@
   ],
   "provides": {
     "Grammar::TokenProcessing": "lib/Grammar/TokenProcessing.rakumod",
+    "Grammar::TokenProcessing::Actions::EBNF": "lib/Grammar/TokenProcessing/Actions/EBNF.rakumod",
     "Grammar::TokenProcessing::Actions::EnhancedTokens": "lib/Grammar/TokenProcessing/Actions/EnhancedTokens.rakumod",
     "Grammar::TokenProcessing::Actions::RandomSentence": "lib/Grammar/TokenProcessing/Actions/RandomSentence.rakumod",
     "Grammar::TokenProcessing::Actions::TokenNames": "lib/Grammar/TokenProcessing/Actions/TokenNames.rakumod",
@@ -38,7 +39,8 @@
     "fuzzy",
     "matching",
     "replacement",
-    "token name"
+    "token name",
+    "EBNF"
   ],
   "api": "1",
   "source-url": "https://github.com/antononcube/Raku-Grammar-TokenProcessing.git"
