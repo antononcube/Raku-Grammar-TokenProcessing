@@ -65,7 +65,6 @@ class Grammar::TokenProcessing::Actions::EBNF
     }
 
     method concatenation($/) {
-        note 'concatenation : ', $<repetition>>>.made.join(' , ');
         make $<repetition>>>.made.join(' , ');
     }
 
@@ -89,7 +88,6 @@ class Grammar::TokenProcessing::Actions::EBNF
     }
 
     method token-comprehensive-body($/) {
-        note 'body : ', $/.values>>.made;
         make $/.values>>.made.join(' ');
     }
 
