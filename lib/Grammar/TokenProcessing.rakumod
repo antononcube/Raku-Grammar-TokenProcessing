@@ -463,7 +463,7 @@ sub replace-definitions(Str $ruleBody, %rules, $actObj, %tokenGenerators, $syms 
 #| C<$sym> : Sym string to concretize proto rules with.
 proto sub random-sentence-generation(|) is export {*}
 
-multi sub random-sentence-generation(Grammar $grammar, Str $ruleBody = 'TOP', *%args) {
+multi sub random-sentence-generation(Grammar $grammar, Str $ruleBody = '<TOP>', *%args) {
     return random-sentence-generation($ruleBody, $grammar.^method_table, |%args);
 }
 
