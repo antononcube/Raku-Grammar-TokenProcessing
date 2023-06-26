@@ -128,6 +128,26 @@ multi sub grammar-source-code(Grammar $gr,
 }
 
 ##===========================================================
+## Automatic top rule
+##===========================================================
+#| Gives the top rule of a grammar.
+proto sub grammar-top-rule($gr) is export {*};
+
+multi sub grammar-top-rule(Grammar $gr) {
+    return grammar-top-rule(grammar-source-code($gr));
+}
+
+multi sub grammar-top-rule(Str $grCode) {
+    my $rule = 'TOP';
+    if !$grCode.contains(/ [rule | regex | token] \h+ TOP <wb> /) {
+        if $grCode ~~ / [rule | regex | token] \h+ (<alnum>+) <wb> / {
+            $rule = $0.Str;
+        }
+    }
+    return $rule;
+}
+
+##===========================================================
 ## Get tokens
 ##===========================================================
 proto get-tokens(Str $spec) is export {*}
