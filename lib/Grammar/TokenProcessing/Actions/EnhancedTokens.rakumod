@@ -55,7 +55,7 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
 
         #| Get the token string
         my Str $term = $/.Str;
-        if $term ~~ / '\'' .* '\'' / {
+        if $term ~~ / ^ [ '\'' .* '\'' | '"' .* '"' ] $ / {
             $term .= substr(1, $/.Str.chars - 2);
         }
 
