@@ -1,6 +1,9 @@
 #!/usr/bin/env raku
 use v6.d;
 
+use lib '.';
+use lib './lib';
+
 use Grammar::TokenProcessing;
 use Grammar::TokenProcessing::ComprehensiveGrammar;
 
@@ -27,21 +30,30 @@ use Data::Reshapers;
 
 #my $focusGrammar = DSL::English::ClassificationWorkflows::Grammar;
 #my $focusGrammar = DSL::English::DataAcquisitionWorkflows::Grammar;
-#my $focusGrammar = DSL::English::DataQueryWorkflows::Grammar;
+my $focusGrammar = DSL::English::DataQueryWorkflows::Grammar;
 #my $focusGrammar = DSL::English::LatentSemanticAnalysisWorkflows::Grammar;
 #my $focusGrammar = DSL::English::QuantileRegressionWorkflows::Grammar;
 #my $focusGrammar = DSL::English::RecommenderWorkflows::Grammar;
 
 #my $focusGrammar = Mathematica::Grammar;
 #my $focusGrammar = Markdown::Grammar;
-my $focusGrammar = Chemistry::Stoichiometry::Grammar;
+#my $focusGrammar = Chemistry::Stoichiometry::Grammar;
 
 #my $focusGrammar = grammar LLoveParser {
 #    rule  TOP  { <workflow-command> }
 #    rule  workflow-command  { I <love> <lang> }
 #    token love { '♥' | love }
-#    token lang { Raku | Perl | Rust | Go | Python | Ruby }
+#    token lang { "Raku" | "Perl" | "Rust" | "Go" | "Python" | "Ruby" }
 #}
+
+#my $focusGrammar =
+#        grammar First {
+#            rule sentence { <I_clause>    | <We_clause>  }
+#            rule I_clause {"I" <hate_love> <R_WL_Julia_Perl> }
+#            rule We_clause {"We" <hate_love> <R_WL_Julia_Perl>}
+#            rule hate_love { "hate"    | "love"    | "really love"    | "often hate"    | "like"  }
+#            rule R_WL_Julia_Perl { "R"    | "WL"    | "Julia"    | "Perl"  }
+#        };
 
 my %focusRules = $focusGrammar.^method_table;
 
@@ -56,14 +68,15 @@ my %focusRules = $focusGrammar.^method_table;
 
 say '=' x 120;
 
-#my $ruleBody = '<workflow-command>';
+my $ruleBody = '<workflow-command>';
+#my $ruleBody = '<sentence>';
 #my $ruleBody = '<random-tabular-data-generation-command>';
 #my $ruleBody = '<random-tabular-dataset-arguments-list>';
 #my $ruleBody = '<random-tabular-dataset-argument>';
 #my $ruleBody = '<moving-func-command>';
 #my $ruleBody = '<topics-extraction-command>';
 #my $ruleBody = '<make-classifier-command>';
-my $ruleBody = '<chemical-equation>';
+#my $ruleBody = '<chemical-equation>';
 
 
 my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(max-random-list-elements => 3);
@@ -73,7 +86,7 @@ my Grammar::TokenProcessing::Actions::RandomSentence $actObj .= new(max-random-l
 my %randomTokenGenerators = default-random-token-generators();
 %randomTokenGenerators{'<number-value>'} = -> { random-real(10).round.Str };
 %randomTokenGenerators{'<number>'} = %randomTokenGenerators{'<number-value>'};
-%randomTokenGenerators{'<integer-value>'} =  -> { random-real(10).round.Str };
+%randomTokenGenerators{'<integer-value>'} = -> { random-real(10).round.Str };
 %randomTokenGenerators{'<integer>'} = %randomTokenGenerators{'<integer-value>'};
 %randomTokenGenerators{'<yield-symbol>'} = -> { ['=', '->'].pick };
 %randomTokenGenerators{'<white-space-regex>'} = '';
@@ -96,4 +109,4 @@ my @randSentences = (^40).map({ random-sentence-generation(
 #say to-pretty-table(@randSentences.map({ Sentence => $_ }));
 #say to-pretty-table(transpose(@randSentences.kv));
 #say to-pretty-table(@randSentences.deepmap(*.raku).pairs, align=>'l', field-names=><Key Value>);
-say to-pretty-table(@randSentences.pairs, align=>'l', field-names=><Key Value>);
+say to-pretty-table(@randSentences.pairs, align => 'l', field-names => <Key Value>);
