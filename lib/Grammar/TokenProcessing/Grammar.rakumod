@@ -18,7 +18,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token comment-line { '#' \N* \n }
 
-  token alnumd { <alpha> | <:Pd> }
+  token alnumd { <alnum> | <:Pd> }
 
   token var-name { <.alpha> <.alnumd>* }
 
