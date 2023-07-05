@@ -61,7 +61,7 @@ class Grammar::TokenProcessing::Actions::EBNF
     method repetition($/) {
         my $rep = $<repeat-spec> ?? $<repeat-spec>.Str !! '';
 
-        make $rep ?? "\{{ $/.Str }\}" !! $/.Str;
+        make $rep ?? "\{{ $<element>.made }\}" !! $/.Str;
     }
 
     method concatenation($/) {
