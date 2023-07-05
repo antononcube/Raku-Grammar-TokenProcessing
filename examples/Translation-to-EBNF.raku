@@ -22,7 +22,7 @@ use Grammar::TokenProcessing::Actions::EBNF;
 my $focusGrammar = q:to/END/;
 grammar LLoveParser {
     rule TOP  { <workflow-command> }
-    rule workflow-command  { 'I' <love> <lang> }
+    rule workflow-command  { 'I' 'really'? <love> <lang> }
     token love { '♥' | 'love' }
     token lang { 'Raku' | 'Perl' | 'Rust' | 'Go' | 'Python' | 'Ruby' }
 }
