@@ -1,5 +1,8 @@
 use v6.d;
 
+use lib '.';
+use lib './lib';
+
 use Grammar::TokenProcessing;
 use DSL::English::LatentSemanticAnalysisWorkflows::Grammar;
 use DSL::English::ClassificationWorkflows::Grammar;
@@ -54,6 +57,9 @@ say '-' x 120;
 
 # Print out grammar source code
 say grammar-source-code($gr, roles => [DSL::English::DataQueryWorkflows::Grammarish, ]);
+
+# Print out grammar top rule
+say grammar-top-rule($gr);
 
 #------------------------------------------------------------------------------------------------------------------------
 say '-' x 120;
