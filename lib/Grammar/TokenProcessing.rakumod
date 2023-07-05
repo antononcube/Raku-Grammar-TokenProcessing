@@ -19,6 +19,7 @@ unit module Grammar::TokenProcessing;
 
 use Grammar::TokenProcessing::Grammar;
 use Grammar::TokenProcessing::ComprehensiveGrammar;
+use Grammar::TokenProcessing::Actions::EBNF;
 use Grammar::TokenProcessing::Actions::EnhancedTokens;
 use Grammar::TokenProcessing::Actions::RandomSentence;
 use Grammar::TokenProcessing::Actions::Tokens;
@@ -125,6 +126,22 @@ multi sub grammar-source-code(Grammar $gr,
     @grLines.append: '}';
 
     return @grLines.join("\n");
+}
+
+##===========================================================
+## EBNF grammar
+##===========================================================
+#| Convert the corresponding EBNF grammar
+proto sub to-ebnf-grammar($gr) is export {*}
+
+multi sub to-ebnf-grammar(Grammar $gr) {
+    my $focusGrammar = grammar-source-code($gr);
+    return to-ebnf-grammar($focusGrammar);
+}
+
+multi sub to-ebnf-grammar(Str $gr) {
+    my Grammar::TokenProcessing::Actions::EBNF $actions .= new;
+    return Grammar::TokenProcessing::ComprehensiveGrammar.parse($gr, :$actions).made;
 }
 
 ##===========================================================
