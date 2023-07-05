@@ -61,7 +61,13 @@ class Grammar::TokenProcessing::Actions::EBNF
     method repetition($/) {
         my $rep = $<repeat-spec> ?? $<repeat-spec>.Str !! '';
 
-        make $rep ?? "\{{ $<element>.made }\}" !! $/.Str;
+        if $rep && $<repeat-spec>.Str.trim eq '?' {
+            make "[{ $<element>.made }]";
+        } elsif  $rep && $<repeat-spec>.Str.trim ∈ <* +> {
+            make "\{{ $<element>.made }\}";
+        } else {
+            make $/.Str;
+        }
     }
 
     method concatenation($/) {
