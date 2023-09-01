@@ -60,7 +60,7 @@ our sub to-single-quoted(Str $s) {
     '\'' ~ $s ~ '\''
 }
 
-our sub to-unqouted(Str $ss is copy) {
+our sub to-unquoted(Str $ss is copy) {
     if $ss ~~ / ^ '\'' (.*) '\'' $ / { return ~$0; }
     if $ss ~~ / ^ '"' (.*) '"' $ / { return ~$0; }
     return $ss;
@@ -550,7 +550,7 @@ multi sub random-sentence-generation(Str $ruleBody,
 
     #note 'random-sentence-generation : '.uc, 'END : ', @res.raku;
     # Post-process
-    @res = @res.grep({ $_.trim.chars > 0 })>>.&to-unqouted;
+    @res = @res.grep({ $_.trim.chars > 0 })>>.&to-unquoted;
 
     # Result
     return $sep ~~ Str ?? @res.join($sep).trim !! @res;
