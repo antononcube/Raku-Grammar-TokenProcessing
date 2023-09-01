@@ -7,7 +7,7 @@ sub reallyflat (+@list) {
     gather @list.deepmap: *.take
 }
 
-sub to-single-qouted(Str $s) { '\'' ~ $s ~ '\'' }
+sub to-single-quoted(Str $s) { '\'' ~ $s ~ '\'' }
 
 class Grammar::TokenProcessing::Actions::EBNF
         is Grammar::TokenProcessing::Actions::Tokens {

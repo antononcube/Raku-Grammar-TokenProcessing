@@ -56,7 +56,7 @@ our sub tree($dir, $extension = Whatever) {
     return @files;
 }
 
-our sub to-single-qouted(Str $s) {
+our sub to-single-quoted(Str $s) {
     '\'' ~ $s ~ '\''
 }
 
@@ -378,19 +378,19 @@ my %randomTokenGenerators =
         '<code-expr>' => -> { 'CODE_EXPR("1+1")' },
         '<shell-expr>' => -> { 'SHELL_EXPR("ls")' },
         '<regex-pattern>' => -> { 'REGEX("\w+")' },
-        '<integer-value>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
-        '<integer>' => -> { to-single-qouted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
-        '<number-value>' => -> { to-single-qouted 'NUMBER(' ~ random-real(300).round(0.01).Str ~ ')' },
-        '<number>' => -> { to-single-qouted 'NUMBER(' ~ random-real(300).round(0.01).Str ~ ')' },
-        '<query-text>' => -> { to-single-qouted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
-        '<mixed-quoted-variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<quoted-variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<variable-name>' => -> { to-single-qouted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<dataset-name>' => -> { to-single-qouted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<function-name>' => -> { to-single-qouted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<raku-module-name>' => -> { to-single-qouted 'MODULE_NAME("' ~ random-string(chars => 8, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
-        '<list-separator>' => -> { to-single-qouted [',', 'and'].pick },
-        '<list-separator>?' => -> { to-single-qouted [',', 'and', ' '].pick };
+        '<integer-value>' => -> { to-single-quoted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
+        '<integer>' => -> { to-single-quoted 'INTEGER(' ~ random-real(300).round.Str ~ ')' },
+        '<number-value>' => -> { to-single-quoted 'NUMBER(' ~ random-real(300).round(0.01).Str ~ ')' },
+        '<number>' => -> { to-single-quoted 'NUMBER(' ~ random-real(300).round(0.01).Str ~ ')' },
+        '<query-text>' => -> { to-single-quoted 'QUERY_TEXT("' ~ random-word(4).join(' ') ~ '")' },
+        '<mixed-quoted-variable-name>' => -> { to-single-quoted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<quoted-variable-name>' => -> { to-single-quoted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<variable-name>' => -> { to-single-quoted 'VAR_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<dataset-name>' => -> { to-single-quoted 'DATASET_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<function-name>' => -> { to-single-quoted 'FUNC_NAME("' ~ random-string(chars => 5, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<raku-module-name>' => -> { to-single-quoted 'MODULE_NAME("' ~ random-string(chars => 8, ranges => ['a' ..'z', 'A' .. 'Z', "0" .. "9"]) ~ '")' },
+        '<list-separator>' => -> { to-single-quoted [',', 'and'].pick },
+        '<list-separator>?' => -> { to-single-quoted [',', 'and', ' '].pick };
 
 sub default-random-token-generators(-->Hash) is export { %randomTokenGenerators }
 

@@ -7,7 +7,7 @@ sub reallyflat (+@list) {
     gather @list.deepmap: *.take
 }
 
-sub to-single-qouted(Str $s) { '\'' ~ $s ~ '\'' }
+sub to-single-quoted(Str $s) { '\'' ~ $s ~ '\'' }
 
 class Grammar::TokenProcessing::Actions::RandomSentence
         is Grammar::TokenProcessing::Actions::Tokens {
@@ -56,10 +56,10 @@ class Grammar::TokenProcessing::Actions::RandomSentence
         # See %randomTokenGenerators in ../TokenProcessing.rakumod .
         #given $sep.trim {
         #    when '<list-separator>' {
-        #        $sep = to-single-qouted( [', ', 'and'].pick );
+        #        $sep = to-single-quoted( [', ', 'and'].pick );
         #    }
         #when $_ ~~ / '<list-separator>' \h* '?' / {
-        #        $sep = to-single-qouted( [', ', 'and', ' '].pick );
+        #        $sep = to-single-quoted( [', ', 'and', ' '].pick );
         #    }
         #}
         make $sep;
