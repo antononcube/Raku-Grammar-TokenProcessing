@@ -83,6 +83,13 @@ multi get-resource-words('English') {
 #| Converts a rule into a regex.
 proto sub rule-to-regex($body) is export {*}
 
+multi sub rule-to-regex(@bodies, Str $sep = ' | ') {
+    if ! @bodies.all ~~ Str {
+        die 'The first argument is expected to be a string or a Positional of strings.';
+    }
+    return @bodies.map({ rule-to-regex($_) }).join($sep);
+}
+
 multi sub rule-to-regex(Str $body is copy) {
     # This ad hoc implementation should be refactored
     # to use Grammar::TokenProcessing::ComprehensiveGrammar.
@@ -374,6 +381,8 @@ my %randomTokenGenerators =
         '<digit>' => -> { 'DIGIT(' ~ random-string(chars => 1, ranges => "0" .. "9") ~ ')'},
         '<.digit>' => -> { 'DIGIT(' ~ random-string(chars => 1, ranges => "0" .. "9") ~ ')'},
         '<:Pd>' => -> { '-' },
+        '<punct>' => -> { 'PUNCT(' ~ random-string(chars=>1, ranges=><. ? ! ...>) ~ ')'},
+        '<.punct>' => -> { 'PUNCT(' ~ random-string(chars=>1, ranges=><. ? ! ...>) ~ ')'},
         '<wl-expr>' => -> { 'WL_EXPR("Sqrt[3]")' },
         '<code-expr>' => -> { 'CODE_EXPR("1+1")' },
         '<shell-expr>' => -> { 'SHELL_EXPR("ls")' },
