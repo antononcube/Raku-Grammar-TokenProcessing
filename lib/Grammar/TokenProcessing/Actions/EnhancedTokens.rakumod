@@ -131,6 +131,10 @@ class Grammar::TokenProcessing::Actions::EnhancedTokens {
         make $/.Str;
     }
 
+    method token-code-regex-body($/) {
+        make $/.Str;
+    }
+
     method token-body($/) {
         make $/.values[0].made;
     }

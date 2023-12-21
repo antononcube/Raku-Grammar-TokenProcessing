@@ -54,6 +54,10 @@ class Grammar::TokenProcessing::Actions::Tokens {
         make '';
     }
 
+    method token-code-regex-body($/) {
+        make '';
+    }
+
     method token-body($/) {
         make $/.values[0].made;
     }

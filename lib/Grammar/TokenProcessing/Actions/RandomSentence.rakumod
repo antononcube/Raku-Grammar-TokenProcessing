@@ -105,6 +105,11 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
     method element($/) { make $/.values[0].made;}
 
+    method token-code-regex-body($/) {
+        #with $<arg> { $!regex-arg = $<arg>.Str; }
+        make $/.Str.subst(/ ^ \s* '<{' | '}>' \s* $ /):g;
+    }
+
     method token-comprehensive-body($/) {
         make reallyflat($/.values>>.made)>>.trim;
     }

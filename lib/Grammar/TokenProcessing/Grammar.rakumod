@@ -56,7 +56,9 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   regex token-complex-body { [ <token-spec> | <token-name-spec> | '.' | '|' | '||' | ']' | '[' | '?' | '+' | '*' | \s | '\\' ]* }
 
-  regex token-body { <token-quoted-list-body> | <token-simple-body> | <token-phrase-body> | <token-complex-body> }
+  regex token-code-regex-body { \s* '<{' <-[{}]>* '}>' \s* }
+
+  regex token-body { <token-quoted-list-body> | <token-simple-body> | <token-phrase-body> | <token-complex-body> | <token-code-regex-body> }
 
   token token-definition-end { '}' \h* [';' \h*]? \n }
 
@@ -64,7 +66,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   regex token-rule-definition {
     <leading-space>
-    <token> \s* <token-name-spec> \s*
+    <token> \s* <token-name-spec> [\s* '(' \h* $<arg>=(<sigil-char>? <var-name>) \h* ')' ]? \s*
     '{'
     <token-body>
     <token-definition-end> }
