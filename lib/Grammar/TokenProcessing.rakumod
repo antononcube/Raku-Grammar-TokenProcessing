@@ -139,14 +139,14 @@ multi sub grammar-source-code(Grammar $gr,
 ## EBNF grammar
 ##===========================================================
 #| Convert the corresponding EBNF grammar
-proto sub to-ebnf-grammar($gr) is export {*}
+proto sub to-ebnf-grammar($gr, |) is export {*}
 
-multi sub to-ebnf-grammar(Grammar $gr) {
-    my $focusGrammar = grammar-source-code($gr);
+multi sub to-ebnf-grammar(Grammar $gr, *%args) {
+    my $focusGrammar = grammar-source-code($gr, |%args);
     return to-ebnf-grammar($focusGrammar);
 }
 
-multi sub to-ebnf-grammar(Str $gr) {
+multi sub to-ebnf-grammar(Str $gr, *%args) {
     my Grammar::TokenProcessing::Actions::EBNF $actions .= new;
     return Grammar::TokenProcessing::ComprehensiveGrammar.parse($gr, :$actions).made;
 }
