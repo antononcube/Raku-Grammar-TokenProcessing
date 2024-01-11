@@ -27,12 +27,16 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
   regex element { <token-spec-element> || <group> }
 
   regex token-comprehensive-body { \s* <alternation>+ % \s+ }
+
+  regex adverb { ':i' | ':ignorecase' | ':m' | ':ignoremark' | ':r' | ':ratchet' | ':s' | ':sigspace' }
+
   #--------------------------------------------------------------------
 
   regex token-rule-definition {
     <leading-space>
     <token> \s* <token-name-spec> \s*
     '{'
+    [ \s* <adverb>* % \s* ]
     [ \s* <token-variables-list> ]?
     [ \s* <token-code-block> ]?
     \s* <token-comprehensive-body> \s*
