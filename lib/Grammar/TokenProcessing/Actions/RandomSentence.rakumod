@@ -7,21 +7,61 @@ sub reallyflat (+@list) {
     gather @list.deepmap: *.take
 }
 
+sub to-unquoted(Str $ss is copy) {
+    if $ss ~~ / ^ '\'' (.*) '\'' $ / { return ~$0; }
+    if $ss ~~ / ^ '"' (.*) '"' $ / { return ~$0; }
+    return $ss;
+}
+
+sub to-unbracketed($ss is copy) {
+    if $ss ~~ Str:D && $ss ~~ / ^ '<' (.*) '>' $ / { return ~$0; }
+    return $ss;
+}
+
 sub to-single-quoted(Str $s) { '\'' ~ $s ~ '\'' }
 
 class Grammar::TokenProcessing::Actions::RandomSentence
         is Grammar::TokenProcessing::Actions::Tokens {
 
-    has $.max-random-list-elements = 12;
+    has $.max-random-list-elements is rw = 12;
+    has %.generators is rw;
 
     method TOP($/) {
         self.gathered-tokens = $/.values>>.made.grep({ $_ ~~ Pair && $_.key.defined && $_.key.chars > 0 });
-        make self.gathered-tokens;
+
+        my %h = self.gathered-tokens.clone.Hash;
+
+        my @res = |%h<TOP>;
+
+        loop {
+            my $changes = 0;
+            for @res.kv -> $i, $element is copy {
+                $element .= subst(/ ^ '<' \./, '<');
+                if %h{$element} // %h{to-unbracketed($element)} // False {
+                    @res[$i] = %h{$element} // %h{to-unbracketed($element)};
+                    $changes++;
+                }
+            }
+            @res = @res.&reallyflat;
+            last if $changes == 0;
+        }
+
+        make @res;
     }
 
-    method token-spec($/) { make $/.Str; }
+    method token-spec($/) { make to-unquoted($/.Str); }
 
-    method token-name-spec($/) { make $/.Str; }
+    method token-name-spec($/) {
+        my $tokenName = $/.Str.trim;
+
+        my $genRes = self.apply-generator-rule($tokenName);
+
+        with $genRes {
+            make $genRes;
+        } else {
+            make $/.Str;
+        }
+    }
 
     method white-space-regex($/) {
         make do given $/.Str {
@@ -111,7 +151,41 @@ class Grammar::TokenProcessing::Actions::RandomSentence
     }
 
     method token-comprehensive-body($/) {
-        make reallyflat($/.values>>.made)>>.trim;
+        make reallyflat($/.values>>.made).Array;
     }
 
+    method token-rule-definition($/) {
+
+        my $tokenName = $<token-name-spec>.Str.trim;
+
+        my $genRes = self.apply-generator-rule($tokenName);
+
+        with $genRes {
+
+            make $genRes;
+
+        } else {
+
+            my @res;
+            if $<token-variables-list> {
+                @res.push($<token-variables-list>.made);
+            }
+
+            if $<token-code-block> {
+                @res.push("CODE-BLOCK");
+            }
+            @res.push($<token-comprehensive-body>.made);
+            make Pair.new($<token-name-spec>.Str, @res.elems > 1 ?? @res !! @res[0]);
+        }
+    }
+
+    #------------------------------------------------------
+    method apply-generator-rule(Str $tokenName is copy) {
+        $tokenName = $tokenName.subst(/ ^ '<' \./, '<');
+        if %!generators{$tokenName} // %!generators{$tokenName.subst(/^ '<' | '>' $/):g} // False {
+            my $rg = %!generators{$tokenName} // %!generators{$tokenName.subst(/^ '<' | '>' $/):g};
+            return to-unquoted($rg.());
+        }
+        return Nil;
+    }
 }
