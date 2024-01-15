@@ -31,15 +31,27 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
         my %h = self.gathered-tokens.clone.Hash;
 
+        #.note for |%h.pairs.sort(*.key);
+
         my @res = |%h<TOP>;
 
         loop {
             my $changes = 0;
             for @res.kv -> $i, $element is copy {
+
                 $element .= subst(/ ^ '<' \./, '<');
-                if %h{$element} // %h{to-unbracketed($element)} // False {
-                    @res[$i] = %h{$element} // %h{to-unbracketed($element)};
-                    $changes++;
+
+                my $uElement = to-unbracketed($element);
+
+                # If the element is a non-terminal look for rules to replace it with
+                if $element ~~ / ^ '<' .*? '>' $ / {
+                    if %h{$element} // %h{$uElement} // False {
+                        @res[$i] = %h{$element} // %h{$uElement};
+                        $changes++;
+                    } elsif %!generators{$element} // %!generators{$uElement} // False {
+                        @res[$i] = self.apply-generators-rule($element);
+                        $changes++;
+                    }
                 }
             }
             @res = @res.&reallyflat;
@@ -54,7 +66,7 @@ class Grammar::TokenProcessing::Actions::RandomSentence
     method token-name-spec($/) {
         my $tokenName = $/.Str.trim;
 
-        my $genRes = self.apply-generator-rule($tokenName);
+        my $genRes = self.apply-generators-rule($tokenName);
 
         with $genRes {
             make $genRes;
@@ -88,21 +100,13 @@ class Grammar::TokenProcessing::Actions::RandomSentence
     }
 
     method repeat-spec-delim($/) {
-        # The repetitions delimiter matcher is not comprehensive.
-        # Hence, we just stringify it.
-        my $sep = $/.Str;
-        # Initially this was hard-coded.
-        # It seems better to move it to the generation rules hash.
-        # See %randomTokenGenerators in ../TokenProcessing.rakumod .
-        #given $sep.trim {
-        #    when '<list-separator>' {
-        #        $sep = to-single-quoted( [', ', 'and'].pick );
-        #    }
-        #when $_ ~~ / '<list-separator>' \h* '?' / {
-        #        $sep = to-single-quoted( [', ', 'and', ' '].pick );
-        #    }
-        #}
-        make $sep;
+        my $sep = $/.Str.trim;
+        $sep = self.apply-generators-rule($sep);
+        with $sep {
+            make $sep;
+        } else {
+            make $/.Str;
+        }
     }
 
     method repetition($/) {
@@ -158,7 +162,7 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
         my $tokenName = $<token-name-spec>.Str.trim;
 
-        my $genRes = self.apply-generator-rule($tokenName);
+        my $genRes = self.apply-generators-rule($tokenName);
 
         with $genRes {
 
@@ -180,10 +184,13 @@ class Grammar::TokenProcessing::Actions::RandomSentence
     }
 
     #------------------------------------------------------
-    method apply-generator-rule(Str $tokenName is copy) {
+    method apply-generators-rule(Str $tokenName is copy, %rules = %!generators) {
         $tokenName = $tokenName.subst(/ ^ '<' \./, '<');
-        if %!generators{$tokenName} // %!generators{$tokenName.subst(/^ '<' | '>' $/):g} // False {
-            my $rg = %!generators{$tokenName} // %!generators{$tokenName.subst(/^ '<' | '>' $/):g};
+        my $uTokenName = to-unbracketed($tokenName);
+        $tokenName = "<$uTokenName>";
+
+        if %rules{$tokenName} // %rules{$uTokenName} // False {
+            my $rg = %rules{$tokenName} // %rules{$uTokenName};
             return to-unquoted($rg.());
         }
         return Nil;
