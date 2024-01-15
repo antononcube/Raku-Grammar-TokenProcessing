@@ -28,7 +28,7 @@ grammar Grammar::TokenProcessing::Grammar  {
 
   token token-name-spec { [\w | '.' | '<'  ] [\w | '-' | ':' | '.' | '<' | '>' ]* }
 
-  token white-space-regex { '\\h' [ '*' | '+' ] }
+  token white-space-regex { ['\\h' | '\\s' | '\\v'] [ '*' | '+' ] }
 
   token token-renamed-spec { '<' \h* <.var-name> \h* '=' \h* \.? <var-name> \h* '>' | '$' '<' <.var-name> '>' '=' '<' \h* \.? <var-name> \h* '>'}
 
