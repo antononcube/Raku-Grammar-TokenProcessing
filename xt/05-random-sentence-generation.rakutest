@@ -53,6 +53,7 @@ grammar Parser {
 ok random-sentence-generation(Parser);
 
 ## 5
+say random-sentence-generation(Parser, '<love>').raku;
 ok random-sentence-generation(Parser, '<love>');
 
 done-testing;
