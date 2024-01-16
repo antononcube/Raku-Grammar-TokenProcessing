@@ -3,14 +3,10 @@ use v6.d;
 use Grammar::TokenProcessing::ComprehensiveGrammar;
 use Grammar::TokenProcessing::Actions::Tokens;
 
-sub reallyflat (+@list) {
-    gather @list.deepmap: *.take
-}
-
-sub to-single-quoted(Str $s) { '\'' ~ $s ~ '\'' }
-
 class Grammar::TokenProcessing::Actions::EBNF
         is Grammar::TokenProcessing::Actions::Tokens {
+
+    has $.ws-marker = Whatever;
 
     method TOP($/) {
         self.gathered-tokens = $/.values>>.made;
@@ -26,7 +22,7 @@ class Grammar::TokenProcessing::Actions::EBNF
     }
 
     method white-space-regex($/) {
-        make "{ $/.Str }";
+        make self.ws-marker.isa(Whatever) ?? $/.Str !! self.ws-marker.Str;
     }
 
     method alnumd($/) {
@@ -61,9 +57,11 @@ class Grammar::TokenProcessing::Actions::EBNF
     method repetition($/) {
         my $rep = $<repeat-spec> ?? $<repeat-spec>.Str !! '';
 
-        if $rep && $<repeat-spec>.Str.trim eq '?' {
+        if $<element><token-spec-element><white-space-regex> {
+            make $<element><token-spec-element><white-space-regex>.made;
+        } elsif $rep && $<repeat-spec>.Str.trim eq '?' {
             make "[{ $<element>.made }]";
-        } elsif  $rep && $<repeat-spec>.Str.trim ∈ <* +> {
+        } elsif $rep && $<repeat-spec>.Str.trim ∈ <* +> {
             make "\{{ $<element>.made }\}";
         } else {
             make $/.Str;

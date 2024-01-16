@@ -77,8 +77,8 @@ class Grammar::TokenProcessing::Actions::RandomSentence
 
     method white-space-regex($/) {
         make do given $/.Str {
-            when $_ ∈ ['\\h*', '\\s*'] { ' ' x (^4).pick }
-            when $_ ∈ ['\\h+', '\\s+'] { ' ' x (1..4).pick }
+            when $_ ∈ ['\\h*', '\\s*', '\\v*', ] { ' ' x (^4).pick }
+            when $_ ∈ ['\\h+', '\\s+', '\\v+', ] { ' ' x (1..4).pick }
             default { $/.Str }
         };
     }

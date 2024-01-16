@@ -142,13 +142,14 @@ multi sub grammar-source-code(Grammar $gr,
 proto sub to-ebnf-grammar($gr, |) is export {*}
 
 multi sub to-ebnf-grammar(Grammar $gr, *%args) {
-    my $focusGrammar = grammar-source-code($gr, |%args);
-    return to-ebnf-grammar($focusGrammar);
+    my %args2 = %args.grep({ $_.key ne 'ws-marker' });
+    my $focusGrammar = grammar-source-code($gr, |%args2);
+    return to-ebnf-grammar($focusGrammar, |%args);
 }
 
 multi sub to-ebnf-grammar(Str $gr, *%args) {
-    my Grammar::TokenProcessing::Actions::EBNF $actions .= new;
-    return Grammar::TokenProcessing::ComprehensiveGrammar.parse($gr, :$actions).made;
+    my Grammar::TokenProcessing::Actions::EBNF $actions .= new(ws-marker => %args<ws-marker> // Whatever);
+    return Grammar::TokenProcessing::ComprehensiveGrammar.parse($gr, :$actions).made.trim;
 }
 
 ##===========================================================
