@@ -24,7 +24,8 @@ grammar Grammar::TokenProcessing::ComprehensiveGrammar
   regex concatenation { \s* [ <repetition>+ % \s+ ] \s* }
   regex alternation { \s* <.delim>? \s* [ <concatenation>+ % <.delim> ] | <token-quoted-list-body> \s* }
   regex group { '[' \s* <alternation> \s* ']' }
-  regex element { <token-spec-element> || <group> }
+  regex capture { '(' \s* <alternation> \s* ')' }
+  regex element { <token-spec-element> || <capture> || <group> }
 
   regex token-comprehensive-body { \s* <alternation>+ % \s+ }
 

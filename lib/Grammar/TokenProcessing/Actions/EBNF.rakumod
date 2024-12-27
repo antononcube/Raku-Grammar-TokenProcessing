@@ -83,6 +83,10 @@ class Grammar::TokenProcessing::Actions::EBNF
         }
     }
 
+    method capture($/) {
+        make $/.values[0].made;
+    }
+
     method group($/) {
         make $/.values[0].made;
     }

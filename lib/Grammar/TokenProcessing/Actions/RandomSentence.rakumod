@@ -145,6 +145,8 @@ class Grammar::TokenProcessing::Actions::RandomSentence
         }
     }
 
+    method capture($/) { make $/.values[0].made; }
+
     method group($/) { make $/.values[0].made; }
 
     method element($/) { make $/.values[0].made;}
