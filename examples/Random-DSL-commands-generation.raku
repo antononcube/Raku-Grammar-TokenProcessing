@@ -33,6 +33,7 @@ my %randomTokenGenerators = default-random-token-generators;
 %randomTokenGenerators{'<numeric-word-form>'} = %randomTokenGenerators{'<integer-value>'};
 
 my $nSentences = 100;
+my $max-iterations = 10;
 my @tblRes;
 
 my $tstart = now;
@@ -55,7 +56,7 @@ for @grammars -> $focusGrammar {
         my @randSentences = (^$nSentences).map({ random-sentence-generation(
                 '<' ~ $cr ~ '>',
                 %focusRules,
-                max-iterations => 100,
+                :$max-iterations,
                 random-token-generators => Whatever,
                 sep => ' ') }).sort.unique;
 
@@ -74,6 +75,6 @@ records-summary(@tblRes, field-names=><Grammar Rule Index Command>);
 say to-pretty-table(@tblRes.pick(12), field-names=><Grammar Rule Index Command>, align=>'l');
 
 # Export
-csv( in => @tblRes, out => "./Random-DSL-commands-$nSentences.csv");
+csv( in => @tblRes, out => $*CWD.add("Random-DSL-commands-{$nSentences}.csv"));
 
 
