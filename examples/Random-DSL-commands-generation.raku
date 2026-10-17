@@ -75,6 +75,6 @@ records-summary(@tblRes, field-names=><Grammar Rule Index Command>);
 say to-pretty-table(@tblRes.pick(12), field-names=><Grammar Rule Index Command>, align=>'l');
 
 # Export
-csv( in => @tblRes, out => $*CWD.add("Random-DSL-commands-{$nSentences}.csv"));
+csv( in => @tblRes, out => $*CWD.add("Random-DSL-commands-{$nSentences}.csv").Str);
 
 
