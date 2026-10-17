@@ -5,7 +5,8 @@ use Data::Generators;
 use Data::Reshapers;
 use Data::Summarizers;
 
-use DSL::Shared::Utilities::ComprehensiveTranslation;
+#use DSL::Shared::Utilities::ComprehensiveTranslation;
+use DSL::Translators;
 
 use Text::CSV;
 
@@ -14,6 +15,7 @@ use Data::Reshapers;
 
 my @grammars = [DSL::English::ClassificationWorkflows::Grammar,
                 DSL::English::DataQueryWorkflows::Grammar,
+                DSL::English::IntegrationWorkflows::Grammar,
                 DSL::English::LatentSemanticAnalysisWorkflows::Grammar,
                 DSL::English::QuantileRegressionWorkflows::Grammar,
                 DSL::English::RecommenderWorkflows::Grammar];
